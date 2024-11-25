@@ -20,20 +20,3 @@ export const routes = Object.fromEntries([
   ["/interview/%E9%A1%B9%E7%9B%AE%E5%9C%BA%E6%99%AF.html", { loader: () => import(/* webpackChunkName: "interview_项目场景.html" */"E:/前端/github/Blog/docs/.vuepress/.temp/pages/interview/项目场景.html.js"), meta: {"title":""} }],
   ["/404.html", { loader: () => import(/* webpackChunkName: "404.html" */"E:/前端/github/Blog/docs/.vuepress/.temp/pages/404.html.js"), meta: {"title":""} }],
 ]);
-
-if (import.meta.webpackHot) {
-  import.meta.webpackHot.accept()
-  if (__VUE_HMR_RUNTIME__.updateRoutes) {
-    __VUE_HMR_RUNTIME__.updateRoutes(routes)
-  }
-  if (__VUE_HMR_RUNTIME__.updateRedirects) {
-    __VUE_HMR_RUNTIME__.updateRedirects(redirects)
-  }
-}
-
-if (import.meta.hot) {
-  import.meta.hot.accept(({ routes, redirects }) => {
-    __VUE_HMR_RUNTIME__.updateRoutes(routes)
-    __VUE_HMR_RUNTIME__.updateRedirects(redirects)
-  })
-}
