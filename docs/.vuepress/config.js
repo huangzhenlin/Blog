@@ -35,5 +35,5 @@ export default defineUserConfig({
   }),
 
   bundler: viteBundler(),
-  base:'/Blog'
+  base:'/Blog/'
 })
