@@ -1,0 +1,300 @@
+<template><div><h2 id="对微信小程序的理解" tabindex="-1"><a class="header-anchor" href="#对微信小程序的理解"><span>对微信小程序的理解</span></a></h2>
+<ol>
+<li>
+<p><strong>实现原理</strong></p>
+<p>网页开发，渲染线程和脚本是互斥的，这也是为什么长时间的脚本运行可能会导致页面失去响应的原因，本质就是我们常说的 JS 是单线程的。</p>
+<p>而在小程序中，选择了 Hybrid 的渲染方式，将视图层和逻辑层是分开的，双线程同时运行 ：</p>
+<ul>
+<li>渲染层：界面渲染相关的任务全都在 WebView 线程里执行。一个小程序存在多个界面，所以渲染层存在多个 WebView 线程。</li>
+<li>逻辑层：采用 JsCore 线程运行 JS 脚本，在这个环境下执行的都是有关小程序业务逻辑的代码</li>
+</ul>
+<p>小程序在渲染层，宿主环境会把wxml转化成对应的JS对象。在逻辑层发生数据变更的时候，通过宿主环境提供的setData方法把数据从逻辑层传递到渲染层，再经过对比前后差异，把差异应用在原来的Dom树上，渲染出正确的视图。</p>
+<p>当视图存在交互的时候，例如用户点击你界面上某个按钮，这类反馈应该通知给开发者的逻辑层，需要将对应的处理状态呈现给用户。对于事件的分发处理，微信进行了特殊的处理，将所有的事件拦截后，丢到逻辑层交给JavaScript进行处理。</p>
+<p>由于小程序是基于双线程的，也就是任何在视图层和逻辑层之间的数据传递都是线程间的通信，会有一定的延时，因此在小程序中，页面更新成了异步操作。异步会使得各部分的运行时序变得复杂一些，比如在渲染首屏的时候，逻辑层与渲染层会同时开始初始化工作，但是渲染层需要有逻辑层的数据才能把界面渲染出来。如果渲染层初始化工作较快完成，就要等逻辑层的指令才能进行下一步工作。因此逻辑层与渲染层需要有一定的机制保证时序正确，在每个小程序页面的生命周期中，存在着若干次页面数据通信</p>
+</li>
+<li>
+<p><strong>运行机制</strong></p>
+<p>小程序启动运行两种情况：</p>
+<ul>
+<li>冷启动（重新开始）：用户首次打开或者小程序被微信主动销毁后再次打开的情况，此时小程序需要重新加载启动，即为冷启动；</li>
+<li>热启动：用户已经打开过小程序，然后在一定时间内再次打开该小程序，此时无需重新启动，只需要将后台态的小程序切换到前台，这个过程就是热启动。</li>
+</ul>
+<p>需要注意：</p>
+<ul>
+<li>小程序没有重启的概念；</li>
+<li>当小程序进入后台，客户端会维持一段时间的运行状态，超过一定时间后会被微信主动销毁；</li>
+<li>短时间内收到系统两次以上内存警告，也会对小程序进行销毁，这也就为什么一旦页面内存溢出，页面会奔溃的本质原因了</li>
+<li>开发者在后台发布新版本之后，无法立刻影响到所有现网用户，但最差情况下，也在发布之后 24 小时之内下发新版本信息到用户。每次冷启动时，都会检查是否有更新版本，如果发现有新版本，将会异步下载新版本的代码包，并同时用客户端本地的包进行启动，即新版本的小程序需要等下一次冷启动才会应用上</li>
+</ul>
+</li>
+<li>
+<p><strong>优缺点</strong></p>
+<p>优点</p>
+<ul>
+<li>随搜随用，用完即走：使得小程序可以代替许多APP，或是做APP的整体嫁接，或是作为阉割版功能的承载体 -</li>
+<li>流量大，易接受：小程序借助自身平台更加容易引入更多的流量</li>
+<li>安全</li>
+<li>开发门槛低 - 降低兼容性限制。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>用户留存：及相关数据显示，小程序的平均次日留存在13%左右，但是双周留存骤降到仅有1%；</li>
+<li>体积限制：微信小程序只有2M的大小，这样导致无法开发大型一些的小程序；</li>
+<li>受控微信：比起APP，尤其是安卓版的高自由度，小程序要面对很多来自微信的限制，从功能接口，甚至到类别内容，都要接受微信的管控</li>
+</ul>
+</li>
+<li>
+<p><strong>和h5的区别</strong></p>
+<p>其中相比H5，小程序与其的区别有如下：</p>
+<ul>
+<li>运⾏环境：⼩程序基于浏览器内核重构的内置解析器</li>
+<li>系统权限：⼩程序能获得更多的系统权限，如⽹络通信状态、数据缓存能⼒等</li>
+<li>渲染机制：⼩程序的逻辑层和渲染层是分开的。</li>
+</ul>
+<p>小程序可以视为只能用微信打开和浏览的H5，小程序和网页的技术模型是一样的，用到的 JavaScript 语言和 CSS 样式也是一样的，只是网页的 HTML 标签被稍微修改成了 WXML 标签。因此可以说，小程序页面本质上就是网页</p>
+</li>
+</ol>
+<h2 id="微信小程序生命周期的理解" tabindex="-1"><a class="header-anchor" href="#微信小程序生命周期的理解"><span>微信小程序生命周期的理解</span></a></h2>
+<ol>
+<li>
+<p><strong>应用的生命周期</strong></p>
+<p>在app.js里面调用的，通过App(Object)函数用来注册一个小程序，指定其小程序的生命周期回调</p>
+<p>触发流程是：</p>
+<ul>
+<li>⽤户⾸次打开⼩程序，触发 onLaunch（全局只触发⼀次）；</li>
+<li>程序初始化完成后，触发onShow⽅法，监听⼩程序显示；</li>
+<li>⼩程序从前台进⼊后台，触发 onHide⽅法；</li>
+<li>⼩程序从后台进⼊前台显示，触发 onShow⽅法；</li>
+<li>⼩程序后台运⾏⼀定时间，或系统资源占⽤过⾼，会被销毁</li>
+</ul>
+<p>主要方法有：</p>
+<ul>
+<li>onLaunch ：小程序初始化完成时触发，全局只触发一次</li>
+<li>onShow ：小程序启动，或从后台进入前台显示时触发</li>
+<li>onHide ：小程序从前台进入后台时触发</li>
+<li>onError ：小程序发生脚本错误或 API 调用报错时触发</li>
+<li>onPageNotFound ：小程序要打开的页面不存在时触发</li>
+<li>onUnhandledRejection ：小程序有未处理的 Promise 拒绝时触发</li>
+<li>onThemeChange ：系统切换主题时触发</li>
+</ul>
+</li>
+<li>
+<p><strong>页面的生命周期</strong></p>
+<p>每进入/切换到一个新的页面的时候，就会调用的生命周期函数，通过Page(Object)函数用来注册一个页面</p>
+<p>触发流程是：</p>
+<ul>
+<li>⼩程序注册完成后，加载⻚⾯，触发onLoad⽅法；</li>
+<li>⻚⾯载⼊后触发onShow⽅法，显示⻚⾯；</li>
+<li>⾸次显示⻚⾯，会触发onReady⽅法，渲染⻚⾯元素和样式，⼀个⻚⾯只会调⽤⼀次；</li>
+<li>当⼩程序后台运⾏或跳转到其他⻚⾯时，触发onHide⽅法；</li>
+<li>当⼩程序有后台进⼊到前台运⾏或重新进⼊⻚⾯时，触发onShow⽅法；</li>
+<li>当使⽤重定向⽅法 wx.redirectTo() 或关闭当前⻚返回上⼀⻚wx.navigateBack()，触发onUnload</li>
+</ul>
+<p>当存在也应用生命周期和页面周期的时候，相关的执行顺序如下：</p>
+<ul>
+<li>打开小程序：(App)onLaunch --&gt; (App)onShow --&gt; (Pages)onLoad --&gt; (Pages)onShow --&gt; (pages)onRead</li>
+<li>进入下一个页面：(Pages)onHide --&gt; (Next)onLoad --&gt; (Next)onShow --&gt; (Next)onReady</li>
+<li>返回上一个页面：(curr)onUnload --&gt; (pre)onShow</li>
+<li>离开小程序：(App)onHide</li>
+<li>再次进入：小程序未销毁 --&gt; (App)onShow(执行上面的顺序），小程序被销毁，（App)onLaunch重新开始执行</li>
+</ul>
+<p>主要方法有：</p>
+<ul>
+<li>onLoad ：监听页面加载，用于请求获取数据</li>
+<li>onShow ：监听页面显示，请求数据</li>
+<li>onReady ：监听页面初次渲染完成，获取页面元素（少用）</li>
+<li>onHide ：监听页面隐藏，终止任务，如定时器或者播放音乐</li>
+<li>onUnload ：监听页面卸载，终止任务</li>
+</ul>
+</li>
+<li>
+<p><strong>组件的生命周期</strong></p>
+<p>指的是组件自身的一些函数，这些函数在特殊的时间点或遇到一些特殊的框架事件时被自动触发，通过Component(Object)进行注册组件</p>
+<p>触发流程是：</p>
+<ul>
+<li>组件实例刚刚被创建好时， created 生命周期被触发，此时，组件数据 this.data 就是在 Component 构造器中定义的数据 data ， 此时不能调用 setData。</li>
+<li>在组件完全初始化完毕、进入页面节点树后， attached 生命周期被触发。此时， this.data 已被初始化为组件的当前值。这个生命周期很有用，绝大多数初始化工作可以在这个时机进行。</li>
+<li>在组件离开页面节点树后， detached 生命周期被触发。退出一个页面时，如果组件还在页面节点树中，则 detached 会被触发。</li>
+<li>还有一些特殊的生命周期，它们并非与组件有很强的关联，但有时组件需要获知，以便组件内部处理，这样的生命周期称为“组件所在页面的生命周期”，在 pageLifetimes 定义段中定义</li>
+</ul>
+<p>主要方法：</p>
+<ul>
+<li>created：监听页面加载</li>
+<li>attached ：生命周期回调—监听页面显示</li>
+<li>ready ：生命周期回调—监听页面初次渲染完成</li>
+<li>moved ：生命周期回调—监听页面隐藏</li>
+<li>detached ：生命周期回调—监听页面卸载</li>
+<li>error ：每当组件方法抛出错误时执行</li>
+</ul>
+<p>注意的是：</p>
+<ul>
+<li>组件实例刚刚被创建好时， created 生命周期被触发，此时，组件数据 this.data 就是在 Component 构造器中定义的数据 data ， 此时不能调用 setData</li>
+<li>在组件完全初始化完毕、进入页面节点树后， attached 生命周期被触发。此时， this.data 已被初始化为组件的当前值。这个生命周期很有用，绝大多数初始化工作可以在这个时机进行</li>
+<li>在组件离开页面节点树后， detached 生命周期被触发。退出一个页面时，如果组件还在页面节点树中，则 detached 会被触发</li>
+</ul>
+</li>
+</ol>
+<h2 id="微信小程序如何页面跳转" tabindex="-1"><a class="header-anchor" href="#微信小程序如何页面跳转"><span>微信小程序如何页面跳转</span></a></h2>
+<ol>
+<li>
+<p>跳转方式</p>
+<ul>
+<li>
+<p><strong>wx.navigateTo(Object)</strong></p>
+<p>用于保留当前页面、跳转到应用内的某个页面，使用 wx.navigateBack可以返回到原页面，对于页面不是特别多的小程序，通常推荐使用 wx.navigateTo进行跳转， 以便返回原页面，以提高加载速度，当页面特别多时，则不推荐使用。</p>
+</li>
+<li>
+<p><strong>wx.redirectTo(Object)</strong></p>
+<p>用于关闭当前页面，跳转到应用内的某个页面，这样的跳转，可以避免跳转前页面占据运行内存，但返回时页面需要重新加载，增加了返回页面的显示时间。当页面过多时，被保留页面会挤占微信分配给小程序的内存，或是达到微信所限制的 10 层页面栈的情况下，我们应该考虑选择</p>
+</li>
+<li>
+<p><strong>wx.switchTab(Object)</strong></p>
+<p>转到 tabBar页面，并关闭其他所有非 tabBar 页面。</p>
+</li>
+<li>
+<p><strong>wx.navigateBack(Object)</strong></p>
+<p>用于关闭当前页面，并返回上一页面或多级页面，开发者可通过 getCurrentPages() 获取当前的页面栈，决定需要返回几层则设置对象的delta属性即可。</p>
+</li>
+<li>
+<p><strong>wx.reLaunch(Object)</strong></p>
+<p>关闭所有页面，打开到应用内的某个页面，返回的时候跳到首页。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>页面栈</strong></p>
+<p>微信小程序拥有web网页和Application共同的特征，我们的页面都不是孤立存在的，而是通过和其他页面进行交互，来共同完成系统的功能。在微信小程序中，每个页面可以看成是一个pageModel，pageModel全部以栈的形式进行管理。其中关于它们的页面栈的关系如下：</p>
+<ul>
+<li>navigateTo 新页面入栈；</li>
+<li>redirectTo 当前页面出栈，新页面入栈；</li>
+<li>navigateBack 页面不断出栈，直到目标返回页，新页面入栈；</li>
+<li>switchTab 页面全部出栈，只留下新的 Tab 页面；</li>
+<li>reLanch 页面全部出栈，只留下新的页面</li>
+</ul>
+</li>
+</ol>
+<h2 id="微信小程序的登录流程" tabindex="-1"><a class="header-anchor" href="#微信小程序的登录流程"><span>微信小程序的登录流程</span></a></h2>
+<ol>
+<li>
+<p><strong>登录功能</strong></p>
+<p>传统的web开发实现登陆功能，一般的做法是：</p>
+<ul>
+<li>输入账号密码、或者输入手机号及短信验证码进行登录。</li>
+<li>服务端校验用户信息通过之后，下发一个代表登录态的 token 给客户端，以便进行后续的交互,</li>
+<li>每当token过期，用户都需要重新登录。</li>
+</ul>
+<p>而在微信小程序中，可以通过微信官方提供的登录能力方便地获取微信提供的用户身份标识，快速建立小程序内的用户体系，从而实现登陆功能。实现小程序用户体系主要涉及到openid和code的概念：</p>
+<ul>
+<li>调用wx.login()方法会生成code，将code作为参数传递给微信服务器指定接口，就可以获取用户的openid；</li>
+<li>对于每个小程序，微信都会将用户的微信ID映射出一个小程序 openid，作为这个用户在这个小程序的唯一标识</li>
+</ul>
+</li>
+<li>
+<p><strong>具体流程</strong></p>
+<ul>
+<li>通过 wx.login() 获取到用户的code判断用户是否授权读取用户信息，调用wx.getUserInfo 读取用户数据。</li>
+<li>由于小程序后台授权域名无法授权微信的域名，所以需要自身后端调用微信服务器获取用户信息。通过 wx.request() 方法请求业务方服务器，后端把 appid , appsecret 和 code 一起发送到微信服务器。 appid 和 appsecret 都是微信提供的，可以在管理员后台找到。</li>
+<li>微信服务器返回了 openid 及本次登录的会话密钥 session_key。</li>
+<li>后端从数据库中查找 openid ，如果没有查到记录，说明该用户没有注册，如果有记录，则继续往下走。session_key 是对用户数据进行加密签名的密钥。为了自身应用安全，session_key 不应该在网络上传输。然后生成 session并返回给小程序。</li>
+<li>小程序把 session 存到 storage 里面。下次请求时，先从 storage 里面读取，然后带给服务端。</li>
+<li>服务端对比 session 对应的记录，然后校验有效期</li>
+</ul>
+</li>
+<li>
+<p><strong>登录过期</strong></p>
+<p>实际业务中，我们还需要登录态是否过期</p>
+<ul>
+<li>通常的做法是在登录态（临时令牌）中保存有效期数据，该有效期数据应该在服务端校验登录态时和约定的时间（如服务端本地的系统时间或时间服务器上的标准时间）做对比。这种方法需要将本地存储的登录态发送到小程序的服务端，服务端判断为无效登录态时再返回需重新执行登录过程的消息给小程序。</li>
+<li>另一种方式可以通过调用wx.checkSession检查微信登陆态是否过期：如果过期，则发起完整的登录流程；如果不过期，则继续使用本地保存的自定义登录态。这种方式的好处是不需要小程序服务端来参与校验，而是在小程序端调用API</li>
+</ul>
+</li>
+</ol>
+<h2 id="微信小程序支付流程" tabindex="-1"><a class="header-anchor" href="#微信小程序支付流程"><span>微信小程序支付流程</span></a></h2>
+<ol>
+<li>
+<p><strong>流程</strong></p>
+<ul>
+<li>打开某小程序，点击直接下单；</li>
+<li>wx.login获取用户临时登录凭证code，发送到后端服务器换取openId；</li>
+<li>在下单时，小程序需要将购买的商品Id，商品数量，以及用户的openId传送到服务器；</li>
+<li>服务器在接收到商品Id、商品数量、openId后，生成服务期订单数据，同时经过一定的签名算法，向微信支付发送请求，获取预付单信息(prepay_id)，同时将获取的数据再次进行相应规则的签名，向小程序端响应必要的信息；</li>
+<li>小程序端在获取对应的参数后，调用wx.requestPayment()发起微信支付，唤醒支付工作台，进行支付；接下来的一些列操作都是由用户来操作的包括了微信支付密码，指纹等验证，确认支付之后执行鉴权调起支付；</li>
+<li>鉴权调起支付：在微信后台进行鉴权，微信后台直接返回给前端支付的结果，前端收到返回数据后对支付结果进行展示；</li>
+<li>推送支付结果：微信后台在给前端返回支付的结果后，也会向后台也返回一个支付结果，后台通过这个支付结果来更新订单的状态</li>
+</ul>
+</li>
+<li>
+<p><strong>wx.requestPayment参数</strong></p>
+<p>其中后端响应数据必要的信息则是wx.requestPayment方法所需要的参数，大致如下：</p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line">wx<span class="token punctuation">.</span><span class="token function">requestPayment</span><span class="token punctuation">(</span><span class="token punctuation">{</span></span>
+<span class="line">  <span class="token comment">// 时间戳</span></span>
+<span class="line">  <span class="token literal-property property">timeStamp</span><span class="token operator">:</span> <span class="token string">''</span><span class="token punctuation">,</span></span>
+<span class="line">  <span class="token comment">// 随机字符串</span></span>
+<span class="line">  <span class="token literal-property property">nonceStr</span><span class="token operator">:</span> <span class="token string">''</span><span class="token punctuation">,</span></span>
+<span class="line">  <span class="token comment">// 统一下单接口返回的 prepay_id 参数值</span></span>
+<span class="line">  <span class="token keyword">package</span><span class="token operator">:</span> <span class="token string">''</span><span class="token punctuation">,</span></span>
+<span class="line">  <span class="token comment">// 签名类型</span></span>
+<span class="line">  <span class="token literal-property property">signType</span><span class="token operator">:</span> <span class="token string">''</span><span class="token punctuation">,</span></span>
+<span class="line">  <span class="token comment">// 签名</span></span>
+<span class="line">  <span class="token literal-property property">paySign</span><span class="token operator">:</span> <span class="token string">''</span><span class="token punctuation">,</span></span>
+<span class="line">  <span class="token comment">// 调用成功回调</span></span>
+<span class="line">  <span class="token function">success</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span></span>
+<span class="line">  <span class="token comment">// 失败回调</span></span>
+<span class="line">  <span class="token function">fail</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span></span>
+<span class="line">  <span class="token comment">// 接口调用结束回调</span></span>
+<span class="line">  <span class="token function">complete</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span></span>
+<span class="line"><span class="token punctuation">}</span><span class="token punctuation">)</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+</ol>
+<h2 id="微信小程序发布流程" tabindex="-1"><a class="header-anchor" href="#微信小程序发布流程"><span>微信小程序发布流程</span></a></h2>
+<ol>
+<li>上传代码：在开发者工具中，可以点击代码上传功能。然后就可以填写版本信息 。然后点击上传，编译器则会提示上传代码成功。</li>
+<li>提交审核：代码上传完毕，就可以登陆微信公众号的官网首页，点击【开发管理】，查看应用详情</li>
+<li>发布版本：当审核通过之后，即可提交发布</li>
+</ol>
+<h2 id="如何提高微信小程序应用速度" tabindex="-1"><a class="header-anchor" href="#如何提高微信小程序应用速度"><span>如何提高微信小程序应用速度</span></a></h2>
+<p>小程序首次启动前，微信会在小程序启动前为小程序准备好通用的运行环境，如运行中的线程和一些基础库的初始化，然后才开始进入启动状态，展示一个固定的启动界面，界面内包含小程序的图标、名称和加载提示图标。此时，微信会在背后完成几项工作：</p>
+<ul>
+<li>下载小程序代码包。</li>
+<li>加载小程序代码包。</li>
+<li>初始化小程序首页。</li>
+</ul>
+<p>下载到的小程序代码包不是小程序的源代码，而是编译、压缩、打包之后的代码包。所以可以从启动加载性能和渲染性能两方面提高速度。在启动加载性能方面需要做的是：</p>
+<ul>
+<li>
+<p><strong>控制代码包的大小</strong>
+代码包的体积压缩可以通过勾选开发者工具中“上传代码时，压缩代码”选项；</p>
+<p>及时清理无用的代码和资源文件；</p>
+<p>减少资源包中的图片等资源的数量和大小（理论上除了小icon，其他图片资源从网络下载），图片资源压缩率有限</p>
+</li>
+<li>
+<p><strong>分包加载</strong></p>
+<p>将用户访问率高的页面放在主包里，将访问率低的页面放入子包里，按需加载；</p>
+<p>当用户点击到子包的目录时，还是有一个代码包下载的过程，这会感觉到明显的卡顿，所以子包也不建议拆的太大；</p>
+<p>当然我们可以采用子包预加载技术，并不需要等到用户点击到子包页面后在下载子包</p>
+</li>
+<li>
+<p><strong>首屏体验</strong></p>
+<p>请求可以在页面onLoad就加载，不需要等页面ready后在异步请求数据；</p>
+<p>尽量减少不必要的https请求，可使用 getStorageSync() 及 setStorageSync() 方法将数据存储在本地；</p>
+<p>可以在前置页面将一些有用的字段带到当前页，进行首次渲染（列表页的某些数据--&gt; 详情页），没有数据的模块可以进行骨架屏的占位</p>
+</li>
+</ul>
+<p>在渲染渲染性能方面需要做的是：</p>
+<ul>
+<li>
+<p><strong>避免不当的使用setData</strong></p>
+<p>不要过于频繁调用setData，应考虑将多次setData合并成一次setData调用；</p>
+<p>数据通信的性能与数据量正相关，因而如果有一些数据字段不在界面中展示且数据结构比较复杂或包含长字符串，则不应使用setData来设置这些数据；</p>
+<p>与界面渲染无关的数据最好不要设置在data中，可以考虑设置在page对象的其他字段下</p>
+</li>
+<li>
+<p><strong>使用自定义组件</strong></p>
+<p>对于一些独立的模块我们尽可能抽离出来，这是因为自定义组件的更新并不会影响页面上其他元素的更新。各个组件也将具有各自独立的逻辑空间；</p>
+<p>每个组件都分别拥有自己的独立的数据、setData调用</p>
+</li>
+</ul>
+</div></template>
+
+

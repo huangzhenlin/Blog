@@ -1,0 +1,1322 @@
+<template><div><h2 id="常见的浏览器内核比较" tabindex="-1"><a class="header-anchor" href="#常见的浏览器内核比较"><span>常见的浏览器内核比较</span></a></h2>
+<ol>
+<li>
+<p><strong>Trident</strong></p>
+<p>这种浏览器内核是 IE 浏览器用的内核，因为在早期 IE 占有大量的市场份额，所以这种内核比较流行，以前有很多网页也是根据这个内核的标准来编写的，但是实际上这个内核对真正的网页标准支持不是很好。但是由于 IE 的高市场占有率，微软也很长时间没有更新 Trident 内核，就导致了 Trident 内核和 W3C 标准脱节。还有就是 Trident 内核的大量 Bug 等安全问题没有得到解决，加上一些专家学者公开自己认为 IE 浏览器不安全的观点，使很多用户开始转向其他浏览器</p>
+</li>
+<li>
+<p><strong>Gecko</strong></p>
+<p>这是 Firefox 和 Flock 所采用的内核，这个内核的优点就是功能强大、丰富，可以支持很多复杂网页效果和浏览器扩展接口，但是代价是也显而易见就是要消耗很多的资源，比如内存</p>
+</li>
+<li>
+<p><strong>Presto</strong></p>
+<p>Opera 曾经采用的就是 Presto 内核，Presto 内核被称为公认的浏览网页速度最快的内核，这得益于它在开发时的天生优势，在处理 JS 脚本等脚本语言时，会比其他的内核快 3 倍左右，缺点就是为了达到很快的速度而丢掉了一部分网页兼容性</p>
+</li>
+<li>
+<p><strong>Webkit</strong></p>
+<p>是 Safari 采用的内核，它的优点就是网页浏览速度较快，虽然不及 Presto 但是也胜于 Gecko 和 Trident，缺点是对于网页代码的容错性不高，也就是说对网页代码的兼容性较低，会使一些编写不标准的网页无法正确显示。WebKit 前身是 KDE 小组的KHTML 引擎，可以说 WebKit 是 KHTML 的一个开源的分支</p>
+</li>
+<li>
+<p><strong>Blink</strong></p>
+<p>谷歌在 Chromium Blog 上发表博客，称将与苹果的开源浏览器核心 Webkit 分道扬镳，在 Chromium 项目中研发 Blink 渲染引擎（即浏览器核心），内置于 Chrome 浏览器之中。其实 Blink 引擎就是 Webkit 的一个分支，就像 webkit 是 KHTML 的分支一样。Blink 引擎现在是谷歌公司与 Opera Software 共同研发，上面提到过的，Opera 弃用了自己的 Presto 内核，加入 Google 阵营，跟随谷歌一起研发 Blink</p>
+</li>
+</ol>
+<h2 id="iframe框架有哪些优缺点" tabindex="-1"><a class="header-anchor" href="#iframe框架有哪些优缺点"><span>iframe框架有哪些优缺点</span></a></h2>
+<ol>
+<li>
+<p>优点</p>
+<ul>
+<li>iframe能够原封不动的把嵌入的网页展现出来；</li>
+<li>如果有多个网页引用iframe，那么你只需要修改iframe的内容，就可以实现调用的每一个页面内容的更改，方便快捷；</li>
+<li>网页如果为了统一风格，头部和版本都是一样的，就可以写成一个页面，用iframe来嵌套，可以增加代码的可重用；</li>
+<li>如果遇到加载缓慢的第三方内容如图标和广告，这些问题可以由iframe来解</li>
+</ul>
+</li>
+<li>
+<p>缺点</p>
+<ul>
+<li>
+<p>搜索引擎的爬虫程序无法解读这种页面；</p>
+</li>
+<li>
+<p>框架结构中出现各种滚动条；</p>
+</li>
+<li>
+<p>使用框架结构时，保证设置正确的导航链接；</p>
+</li>
+<li>
+<p>iframe页面会增加服务器的http请求</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="对事件循环的理解" tabindex="-1"><a class="header-anchor" href="#对事件循环的理解"><span>对事件循环的理解</span></a></h2>
+<ol>
+<li>
+<p><strong>概念</strong></p>
+<p>首先，JavaScript是一门单线程的语言，意味着同一时间内只能做一件事，但是这并不意味着单线程就是阻塞，而实现单线程非阻塞的方法就是事件循环。在JavaScript中，所有的任务都可以分为：</p>
+<ul>
+<li>同步任务：立即执行的任务，同步任务一般会直接进入到主线程中执行。</li>
+<li>异步任务：异步执行的任务，比如ajax网络请求，setTimeout定时函数等</li>
+</ul>
+<p>同步任务进入主线程，即主执行栈，异步任务进入任务队列，主线程内的任务执行完毕为空，会去任务队列读取对应的任务，推入主线程执行。上述过程的不断重复就是事件循环</p>
+</li>
+<li>
+<p><strong>宏任务macrotask</strong></p>
+<p>可以理解是每次执行栈执行的代码就是一个宏任务（包括每次从事件队列中获取一个事件回调并放到执行栈中执行）。</p>
+<p>浏览器为了能够使得JS内部macrotask与DOM任务能够有序的执行，会在一个macrotask执行结束后，在下一个macrotask 执行开始前，对页面进行重新渲染。</p>
+<p>包括：</p>
+<ul>
+<li>script (可以理解为外层同步代码)</li>
+<li>setTimeout/setInterval</li>
+<li>UI rendering/UI事件</li>
+<li>postMessage、MessageChannel</li>
+<li>setImmediate、I/O（Node.js）</li>
+</ul>
+</li>
+<li>
+<p><strong>微任务microtask</strong></p>
+<p>可以理解是在当前 task 执行结束后立即执行的任务。</p>
+<p>也就是说，在当前task任务后，下一个task之前，在渲染之前。所以它的响应速度相比setTimeout（setTimeout是task）会更快，因为无需等渲染。也就是说，在某一个macrotask执行完后，就会将在它执行期间产生的所有microtask都执行完毕（在渲染前。</p>
+<p>包括：</p>
+<ul>
+<li>Promise.then</li>
+<li>MutaionObserver</li>
+<li>Object.observe（已废弃；Proxy 对象替代）</li>
+<li>process.nextTick（Node.js）</li>
+</ul>
+</li>
+<li>
+<p><strong>执行机制</strong></p>
+<p>执行机制如下：</p>
+<ul>
+<li>执行一个宏任务，如果遇到微任务就将它放到微任务的事件队列中</li>
+<li>当前宏任务执行完成后，会查看微任务的事件队列，然后将里面的所有微任务依次执行完</li>
+<li>宏任务队列可以有多个，微任务队列只有一个。执行顺序是 微任务 &gt; DOM渲染 &gt; 宏任务</li>
+</ul>
+<p>Event Loop 执行顺序详细如下所示：</p>
+<ul>
+<li>从宏任务队列中，按照入队顺序，找到第一个执行的宏任务，放入调用栈，开始执行。第一次执行的时候，解释器会将整体代码script放入宏任务队列中，因此事件循环是从script这个宏任务开始的</li>
+<li>执行完该宏任务下所有同步任务后，即调用栈清空后，该宏任务被推出宏任务队列，然后微任务队列开始按照入队顺序，依次执行其中的微任务，直至微任务队列清空为止</li>
+<li>当微任务队列清空后，一个事件循环结束。一次事件循环中，宏任务永远在微任务之前执行。完成一个宏任务后，执行余下的所有微任务。</li>
+<li>微任务按放入队列的顺序执行，先放入的先执行，如果在执行微任务的过程中，产生新的微任务添加到微任务队列中，也需要一起清空；微任务队列没清空之前，是不会执行下一个宏任务的</li>
+<li>当一次事件循环结束后，即一个宏任务执行完成后以及微任务队列被清空后，浏览器就会进行一次页面更新渲染</li>
+<li>接着从宏任务队列中，找到下一个执行的宏任务，开始第二次事件循环，直至宏任务队列清空为止</li>
+</ul>
+</li>
+</ol>
+<h2 id="前端储存的方式有哪些" tabindex="-1"><a class="header-anchor" href="#前端储存的方式有哪些"><span>前端储存的⽅式有哪些</span></a></h2>
+<ol>
+<li>
+<p>方式</p>
+<ul>
+<li>
+<p><strong>cookie</strong></p>
+<p>在 HTML5 标准前本地储存的主要⽅式，</p>
+<ul>
+<li>优点是：兼容性好，请求头⾃带 cookie⽅便，</li>
+<li>缺点是：⼤⼩只有 4k，⾃动请求头加⼊cookie浪费流量，每个 domain 限制 20 个 cookie，使⽤起来麻烦，需要⾃⾏封装；</li>
+</ul>
+</li>
+<li>
+<p><strong>localStorage</strong></p>
+<p>HTML5 加⼊的以键值对(Key-Value)为标准的⽅式，</p>
+<ul>
+<li>优点：操作⽅便，永久性储存（除⾮⼿动删除），⼤⼩为 5M，兼容IE8+ ；</li>
+<li>缺点：本质上是对字符串的读取，如果存储内容多的话会消耗内存空间，会导致页面变卡；</li>
+<li>受同源策略的限制</li>
+</ul>
+</li>
+<li>
+<p><strong>sessionStorage</strong></p>
+<p>与 localStorage 基本类似</p>
+<ul>
+<li>区别是 sessionStorage当⻚⾯关闭后会被清理，</li>
+<li>⽽且与 cookie、localStorage 不同，他不能在所有同源窗⼝中共享，是会话级别的储存⽅式；</li>
+</ul>
+</li>
+<li>
+<p><strong>WebSQL</strong></p>
+<p>2010 年被 W3C 废弃的本地数据库数据存储⽅案，但是主流浏览器（⽕狐除外）都已经有了相关的实现，web sql 类似于 SQLite， 是真正意义上的关系型数据库，⽤sql进⾏操作，当我们⽤JavaScript时要进⾏转换，较为繁琐；</p>
+</li>
+<li>
+<p><strong>indexedDB</strong></p>
+<p>是被正式纳⼊HTML5 标准的数据库储存⽅案，它是 NoSQL数据库，⽤键值对进⾏储存，可以进⾏快速读取操作，⾮常适合 web场景，同时⽤JavaScript 进⾏操作会⾮常便</p>
+<ul>
+<li>优点：储存量理论上没有上限；所有操作都是异步的，相比 LocalStorage 同步操作性能更高，尤其是数据量较大时；原生支持储存JS的对象；是个正经的数据库，意味着数据库能干的事它都能干</li>
+<li>缺点：操作非常繁琐；本身有一定门槛</li>
+</ul>
+<p>关于indexedDB的使用基本使用步骤如下：</p>
+<ul>
+<li>打开数据库并且开始一个事务</li>
+<li>创建一个 object store</li>
+<li>构建一个请求来执行一些数据库操作，像增加或提取数据等。</li>
+<li>通过监听正确类型的 DOM 事件以等待操作完成。</li>
+<li>在操作结果上进行一些操作（可以在 request对象中找到）</li>
+</ul>
+</li>
+<li>
+<p><strong>Cache Storage</strong></p>
+<p>是浏览器缓存的⼀部分，⽤于存储浏览器的缓存资源。它可以⽤ 来缓存⽹⻚、脚本、样式表、图像等静态资源，以提⾼⽹⻚加载速度和离线访问能⼒</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>区别</strong></p>
+<p>关于cookie、sessionStorage、localStorage三者的区别主要如下：</p>
+<ul>
+<li>存储大小：cookie数据大小不能超过4k，sessionStorage和localStorage虽然也有存储大小的限制，但比cookie大得多，可以达到5M或更大</li>
+<li>有效时间：localStorage存储持久数据，浏览器关闭后数据不丢失除非主动删除数据； sessionStorage数据在当前浏览器窗口关闭后自动删除；cookie设置的cookie过期时间之前一直有效，即使窗口或浏览器关闭</li>
+<li>数据与服务器之间的交互方式，cookie的数据会自动的传递到服务器，服务器端也可以写cookie到客户端； sessionStorage和localStorage不会自动把数据发给服务器，仅在本地保存</li>
+</ul>
+</li>
+<li>
+<p><strong>应用</strong></p>
+<ul>
+<li>标记用户与跟踪用户行为的情况，推荐使用cookie</li>
+<li>适合长期保存在本地的数据（令牌），推荐使用localStorage</li>
+<li>敏感账号一次性登录，推荐使用sessionStorage</li>
+<li>存储大量数据的情况、在线文档（富文本编辑器）保存编辑历史的情况，推荐使用indexedDB</li>
+</ul>
+</li>
+</ol>
+<h2 id="浏览器的渲染过程" tabindex="-1"><a class="header-anchor" href="#浏览器的渲染过程"><span>浏览器的渲染过程</span></a></h2>
+<ol>
+<li>
+<p><strong>DOM树</strong></p>
+<p>首先解析收到的文档，根据文档定义构建一棵 DOM 树，DOM 树是由DOM 元素及属性节点组成的</p>
+</li>
+<li>
+<p><strong>解析css构建render树</strong></p>
+<p>然后对 CSS 进行解析，生成 CSSOM 规则树。根据 DOM 树和 CSSOM 规则树构建渲染树。</p>
+<p>渲染树的节点被称为渲染对象，渲染对象是一个包含有颜色和大小等属性的矩形，渲染对象和DOM 元素相对应，但这种对应关系不是一对一的，不可见的 DOM 元素不会被插入渲染树。还有一些 DOM 元素对应几个可见对象，它们一般是一些具有复杂结构的元素，无法用一个矩形来描述。</p>
+</li>
+<li>
+<p><strong>布局render树</strong></p>
+<p>当渲染对象被创建并添加到树中，它们并没有位置和大小，所以当浏览器生成渲染树以后，就会根据渲染树来进行布局（也可以叫做回流）。这一阶段浏览器要做的事情是要弄清楚各个节点在页面中的确切位置和大小。通常这一行为也被称为“自动重排”</p>
+</li>
+<li>
+<p><strong>绘制render树</strong></p>
+<p>布局阶段结束后是绘制阶段，遍历渲染树并调用渲染对象的 paint方法将它们的内容显示在屏幕上，绘制使用 UI 基础组件</p>
+</li>
+<li>
+<p><strong>composite显示</strong></p>
+<p>浏览器会将各层的信息发送给GPU（GPU进程：最多一个，用于3D绘制等），GPU会将各层合成（composite），显示在屏幕上。</p>
+</li>
+</ol>
+<h2 id="从浏览器输入地址到呈现页面过程" tabindex="-1"><a class="header-anchor" href="#从浏览器输入地址到呈现页面过程"><span>从浏览器输入地址到呈现页面过程</span></a></h2>
+<ol>
+<li>
+<p><strong>URL解析：浏览器（客户端）进行地址解析</strong></p>
+<p>分析所需要使用的传输协议和请求的资源的路径，包括传输协议，服务器，域名，并且会对非法字符进行转义； 如果存在有效的缓存, 就直接使用缓存，否则向服务器发起新的请求。</p>
+<p>URL定义：统一资源定位符，用于访问互联网资源。语法规则：scheme 😕/ hostname[:port] / path / [?query]#fragment</p>
+<ul>
+<li>scheme：通信协议，常见的有file(本地文件)、ftp、http、https</li>
+<li>hostname: 服务器主机名或者ip， 比如 www.zhihu.com</li>
+<li>port: 端口号 (默认端口号为80)</li>
+<li>path: 文件资源路径</li>
+<li>query： 请求参数 ?与#之前的部分为请求参数部分</li>
+<li>fragment：片段， #后面的部分为锚片段，一般锚链接会用到</li>
+</ul>
+</li>
+<li>
+<p><strong>DNS查询：将解析出的域名进行dns解析，找到ip地址</strong></p>
+<p>步骤如下：</p>
+<ul>
+<li>首先会在浏览器的缓存中查找对应的 IP 地址，如果查找到直接返回，若找不到继续下一步</li>
+<li>将请求发送给本地 DNS 服务器，在本地域名服务器缓存中查询，如果查找到，就直接将查找结果返回，若找不到继续下一步</li>
+<li>本地 DNS 服务器向根域名服务器发送请求，根域名服务器会返回一个所查询域的顶级域名服务器地址</li>
+<li>本地 DNS 服务器向顶级域名服务器发送请求，接受请求的服务器查询自己的缓存，如果有记录，就返回查询结果，如果没有就返回相关的下一级的权威域名服务器的地址</li>
+<li>本地 DNS 服务器向权威域名服务器发送请求，域名服务器返回对应的结果</li>
+<li>本地 DNS 服务器将返回结果保存在缓存中，便于下次使用</li>
+<li>本地 DNS 服务器将返回结果返回给浏览器</li>
+</ul>
+<p>比如要查询 www.baidu.com 的 IP 地址，首先会在浏览器的缓存中查找是否有该域名的缓存，如果不存在就将请求发送到本地的 DNS服务器中，本地 DNS 服务器会判断是否存在该域名的缓存，如果不存在，则向根域名服务器发送一个请求，根域名服务器返回负责 .com的顶级域名服务器的 IP 地址的列表。然后本地 DNS 服务器再向其中一个负责 .com 的顶级域名服务器发送一个请求，负责 .com 的顶级域名服务器返回负责 .baidu 的权威域名服务器的 IP 地址列表。然后本地 DNS 服务器再向其中一个权威域名服务器发送一个请求，最后权威域名服务器返回一个对应的主机名的 IP 地址列表。</p>
+</li>
+<li>
+<p><strong>TCP连接：进行tcp三次握手，建立tcp连接</strong></p>
+<p>刚开始客户端处于 Closed 的状态，服务端处于 Listen 状态</p>
+<p>第一次握手：客户端向服务端发送连接请求报文段。该报文段中包含自身的数据通讯初始序号。请求发送后，客户端便进入 SYN-SENT 状态。</p>
+<p>第二次握手：服务端收到连接请求报文段后，如果同意连接，则会发送一个应答，该应答中也会包含自身的数据通讯初始序号，发送完成后便进入 SYN-RECEIVED 状态。</p>
+<p>第三次握手：当客户端收到连接同意的应答后，还要向服务端发送一个确认报文。客户端发完这个报文段后便进入 ESTABLISHED 状态，服务端收到这个应答后也进入 ESTABLISHED 状态，此时连接建立成功。</p>
+<p>TCP 三次握手的建立连接的过程就是相互确认初始序号的过程，告诉对方，什么样序号的报文段能够被正确接收。 第三次握手的作用是客户端对服务器端的初始序号的确认。如果只使用两次握手，那么服务器就没有办法知道自己的序号是否 已被确认。同时这样也是为了防止失效的请求报文段被服务器接收，而出现错误的情况。</p>
+</li>
+<li>
+<p><strong>发起请求：浏览器发送数据，等待服务器响应</strong></p>
+<p>完整的HTTP请求包含请求行、请求头、空行、消息体</p>
+<div class="language-http line-numbers-mode" data-highlighter="prismjs" data-ext="http" data-title="http"><pre v-pre><code><span class="line">POST / HTTP1.1</span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Host</span><span class="token punctuation">:</span><span class="token header-value">www.wrox.com</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">User-Agent</span><span class="token punctuation">:</span><span class="token header-value">Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Content-Type</span><span class="token punctuation">:</span><span class="token header-value">application/x-www-form-urlencoded</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Content-Length</span><span class="token punctuation">:</span><span class="token header-value">40</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Connection</span><span class="token punctuation">:</span> <span class="token header-value">Keep-Alive</span></span></span>
+<span class="line">name=Professional%20Ajax&amp;publisher=Wiley</span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>上面抓包的请求报文的例子中：</p>
+<p>第一部分：请求行，由请求方法、URL 、协议版本组成.也就是第一行数据(POST / HTTP1.1)</p>
+<p>第二部分：请求头部，紧接着请求行（即第一行）之后的部分，用来说明服务器要使用的附加信息 (第二行到第六行)</p>
+<p>第三部分：空行，请求头部后面的空行是必须的 (第七行的空行)</p>
+<p>第四部分：请求数据也叫主体，可以添加任意的其他数据。(第八行)</p>
+</li>
+<li>
+<p><strong>处理请求：服务器处理请求，并对请求做出响应</strong></p>
+<p>当服务器接收到客户端的请求之后，会进行逻辑处理，处理完之后，会返回给客户端一个http响应数据，响应数据包括三部分：状态行、响应头、响应正文</p>
+</li>
+<li>
+<p><strong>接受响应：浏览器收到服务器响应，得到html代码</strong></p>
+<p>浏览器接收到来自服务器的响应资源后，会对资源进行分析：</p>
+<ul>
+<li>首先查看 Response header，根据不同状态码做不同的事（比如重定向）；</li>
+<li>如果响应资源进行了压缩（比如 gzip），还需要进行解压；</li>
+<li>然后，对响应资源做缓存；</li>
+<li>接下来，根据响应资源里的 MIME 类型去解析响应内容（比如 HTML、Image各有不同的解析方式）</li>
+</ul>
+</li>
+<li>
+<p><strong>连接断开：进行tcp四次挥手，断开tcp连接</strong></p>
+<p>刚开始双方都处于 ESTABLISHED 状态，假如是客户端先发起关闭请求。四次挥手的过程如下：</p>
+<ul>
+<li>第一次挥手：若客户端认为数据发送完成，则它需要向服务端发送连接释放请求。</li>
+<li>第二次挥手：服务端收到连接释放请求后，会告诉应用层要释放 TCP链接。然后会发送 ACK 包，并进入 CLOSE_WAIT 状态，此时表明客户端到服务端的连接已经释放，不再接收客户端发的数据了。但是因为 TCP 连接是双向的，所以服务端仍旧可以发送数据给客户端。</li>
+<li>第三次挥手：服务端如果此时还有没发完的数据会继续发送，完毕后会向客户端发送连接释放请求，然后服务端便进入 LAST-ACK 状态。</li>
+<li>第四次挥手：客户端收到释放请求后，向服务端发送确认应答，此时客户端进入 TIME-WAIT 状态。该状态会持续 2MSL（最大段生存期，指报文段在网络中生存的时间，超时会被抛弃） 时间，若该时间段内没有服务端的重发请求的话，就进入 CLOSED 状态。当服务端收到确认应答后，也便进入 CLOSED 状态。</li>
+</ul>
+<p>TCP 使用四次挥手的原因是因为 TCP 的连接是全双工的，所以需要双方分别释放到对方的连接，单独一方的连接释放，只代表不能再向对方发送数据，连接处于的是半释放的状态。最后一次挥手中，客户端会等待一段时间再关闭的原因，是为了防止发送给服务器的确认报文段丢失或者出错，从而导致服务器 端不能正常关闭。</p>
+</li>
+<li>
+<p><strong>渲染页面</strong></p>
+<ul>
+<li>根据HTML文件解析出DOM Tree</li>
+<li>根据CSS解析出 CSSOM Tree(CSS规则树)</li>
+<li>将 DOM Tree 和 CSSOM Tree合并，构建Render tree(渲染树)</li>
+<li>reflow(重排)：Layout根据Render tree进行节点信息计算</li>
+<li>repaint(重绘)：Painting根据计算好的信息绘制整个页面</li>
+</ul>
+</li>
+</ol>
+<h2 id="对回流与重绘的理解" tabindex="-1"><a class="header-anchor" href="#对回流与重绘的理解"><span>对回流与重绘的理解</span></a></h2>
+<ol>
+<li>
+<p><strong>回流</strong></p>
+<p>当渲染树中部分或者全部元素的尺寸、结构或者属性发生变化时，浏览器会重新渲染部分或者全部文档的过程就称为回流。</p>
+<p>下面这些操作会导致回流：</p>
+<ul>
+<li>页面的首次渲染</li>
+<li>浏览器的窗口大小发生变化</li>
+<li>元素的内容发生变化</li>
+<li>元素的尺寸或者位置发生变化</li>
+<li>元素的字体大小发生变化</li>
+<li>激活 CSS 伪类</li>
+<li>查询某些属性或者调用某些方法</li>
+<li>添加或者删除可见的 DOM 元素</li>
+</ul>
+<p>在触发回流（重排）的时候，由于浏览器渲染页面是基于流式布局的，所以当触发回流时，会导致周围的 DOM 元素重新排列，它的影响范围有两种：</p>
+<ul>
+<li>全局范围：从根节点开始，对整个渲染树进行重新布局</li>
+<li>局部范围：对渲染树的某部分或者一个渲染对象进行重新布局</li>
+</ul>
+</li>
+<li>
+<p><strong>重绘</strong></p>
+<p>当页面中某些元素的样式发生变化，但是不会影响其在文档流中的位置时，浏览器就会对元素进行重新绘制，这个过程就是重绘</p>
+<p>下面这些操作会导致重绘：</p>
+<ul>
+<li>color、background 相关属性：background-color、background-image等</li>
+<li>outline相关属性：outline-color、outline-width、text-decoration</li>
+<li>border-radius、visibility、box-shadow</li>
+</ul>
+<p>注意： 当触发回流时，一定会触发重绘，但是重绘不一定会引发回流。</p>
+</li>
+<li>
+<p><strong>措施</strong></p>
+<ul>
+<li>
+<p><strong>浏览器对于重排和重绘的优化</strong></p>
+<p>浏览器针对页面的回流与重绘，进行了自身的优化渲染队列：浏览器会将所有的回流、重绘的操作放在一个队列中，当队列中的操作到了一定的数量或者到了一定的时间间隔，浏览器就会对队列进行批处理。这样就会让多次的回流、重绘变成一次回流重绘</p>
+</li>
+<li>
+<p><strong>css中避免重排重绘</strong></p>
+<ul>
+<li>减少重排范围，尽量将需要重排的内容固定在局部范围。</li>
+<li>不要使用 table 布局，可能很小的一个改动会造成整个 table 的重新布局。不得已使用table的场景，可以设置 table-layout: auto; 或者 table-layout: fixed; 这样可以让 table一行一行的渲染，同时可可以限制重排的影响范围。</li>
+<li>集中修改样式。这样可以尽可能利用浏览器的优化机制，一次重排重绘就完成渲染。</li>
+<li>避免设置多项内联样式。</li>
+<li>如果想设定元素的样式，可以通过改变元素的 class 类名（尽可能在 DOM 树的最里层）。</li>
+<li>将 DOM 离线。通过设置元素属性 display: none; 将其从页面上去掉，然后再进行后续操作，这些后续操作将不会出发重排重绘，最后通过 display 属性显示。另外，visibility:hidden 的元素只对重绘有影响，不影响重排。</li>
+<li>使用 position: absolute / fixed; 脱离文档流。例如那些复杂的动画，对其设置 position:absolute / fixed; 尽可能地使元素脱离文档流，从而减少对其他元素的影响。</li>
+<li>利用 transform translate 去代替 left top 的变换。</li>
+<li>使用 css3 硬件加速，可以让 transform、opacity、filters 这些动画不会引起重排重绘。</li>
+<li>避免使用 css 的 JavaScript 表达式。</li>
+<li>将频繁重排或重绘的节点设置为图层。将节点设置为 video 或 iframe；为节点添加 will-change 属性。</li>
+</ul>
+</li>
+<li>
+<p><strong>js中避免重排和重绘</strong></p>
+<ul>
+<li>减少直接操作 DOM 元素。不要一条一条地修改 DOM 的样式，改用 className 来控制。</li>
+<li>分离读写操作。当需要 js 操作元素样式时，即将获取样式属性的操作集中执行，并缓存值，在需要设置样式属性时也集中处理，避免获取和设置的操作互相夹杂。为获取、设置的操作都会引起重排。</li>
+<li>动态插入多个节点时，可以使用文档碎片（DocumnetFragment），创建后一次插入，避免多次的渲染性能。DocumnetFragment 是一个保存多个元素的容器对象（保存在内存），当更新其中的一个或者多个元素时，页面不会更新。</li>
+<li>不要把 DOM 节点的 offsetLeft 等属性值放在一个循环里当成循环里的变量。</li>
+<li>使用 resize 事件时，做防抖和节流处理。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="对documentfragment的理解" tabindex="-1"><a class="header-anchor" href="#对documentfragment的理解"><span>对documentFragment的理解</span></a></h2>
+<ol>
+<li>
+<p><strong>定义</strong></p>
+<p>DocumentFragment，文档片段接口，一个没有父对象的最小文档对象。它被作为一个轻量版的 Document 使用，就像标准的 document 一样，存储由节点（nodes）组成的文档结构。</p>
+<p>注意：当我们把一个 DocumentFragment 节点插入文档树时，插入的不是DocumentFragment 自身，而是它的所有子孙节点。</p>
+</li>
+<li>
+<p><strong>优点</strong></p>
+<p>在频繁的 DOM 操作时，我们就可以将 DOM 元素插入 DocumentFragment，之后一次性的将所有的子孙节点插入文档中。</p>
+<p>和直接操作 DOM 相比，将DocumentFragment 节点插入 DOM 树时，不会触发页面的重绘，这样就大大提高了页面的性能。</p>
+</li>
+</ol>
+<h2 id="浏览器渲染进程的线程有哪些" tabindex="-1"><a class="header-anchor" href="#浏览器渲染进程的线程有哪些"><span>浏览器渲染进程的线程有哪些</span></a></h2>
+<ol>
+<li>
+<p><strong>GUI线程</strong></p>
+<p>负责渲染浏览器页面，解析 HTML、CSS，构建 DOM 树、构建 CSSOM 树、构建渲染树和绘制页面；当界面需要重绘或由于某种操作引发回流时，该线程就会执行。
+注意：GUI 渲染线程和 JS 引擎线程是互斥的，当 JS 引擎执行时 GUI线程会被挂起，GUI 更新会被保存在一个队列中等到 JS 引擎空闲时立即被执行。</p>
+</li>
+<li>
+<p><strong>js引擎进程</strong></p>
+<p>JS 引擎线程也称为 JS 内核，负责处理 Javascript 脚本程序，解析Javascript 脚本，运行代码；JS 引擎线程一直等待着任务队列中任务的到来，然后加以处理，一个 Tab 页中无论什么时候都只有一个JS 引擎线程在运行 JS 程序；
+注意：GUI 渲染线程与 JS 引擎线程的互斥关系，所以如果 JS 执行的时间过长，会造成页面的渲染不连贯，导致页面渲染加载阻塞。</p>
+</li>
+<li>
+<p><strong>事件触发进程</strong></p>
+<p>属于浏览器而不是 JS 引擎，用来控制事件循环；当 JS引擎执行代码块如 setTimeOut 时（也可是来自浏览器内核的其他线程,如鼠标点击、AJAX 异步请求等），会将对应任务添加到事件触发线程中；当对应的事件符合触发条件被触发时，该线程会把事件添加到待处理队列的队尾，等待 JS 引擎的处理；</p>
+<p>注意：由于 JS 的单线程关系，所以这些待处理队列中的事件都得排队等待 JS 引擎处理（当 JS 引擎空闲时才会去执行）</p>
+</li>
+<li>
+<p><strong>定时器触发线程</strong></p>
+<p>定时器触发进程即 setInterval 与 setTimeout 所在线程；浏览器定时计数器并不是由 JS 引擎计数的，因为 JS 引擎是单线程的，如果处于阻塞线程状态就会影响记计时的准确性；因此使用单独线程来计时并触发定时器，计时完毕后，添加到事件队列中，等待 JS 引擎空闲后执行，所以定时器中的任务在设定的时间点不一定能够准时执行，定时器只是在指定时间点将任务添加到事件队列中；
+注意：W3C 在 HTML 标准中规定，定时器的定时时间不能小于 4ms，如果是小于 4ms，则默认为 4ms</p>
+</li>
+<li>
+<p><strong>异步http请求进程</strong></p>
+<p>XMLHttpRequest 连接后通过浏览器新开一个线程请求；检测到状态变更时，如果设置有回调函数，异步线程就产生状态变更事件，将回调函数放入事件队列中，等待 JS 引擎空闲后执行</p>
+</li>
+</ol>
+<h2 id="对浏览器的缓存机制的理解" tabindex="-1"><a class="header-anchor" href="#对浏览器的缓存机制的理解"><span>对浏览器的缓存机制的理解</span></a></h2>
+<ol>
+<li>
+<p><strong>强缓存</strong></p>
+<p>使用强缓存策略时，如果缓存资源有效，则直接使用缓存资源，不必再向服务器发起请求。</p>
+<p>强缓存策略可以通过两种方式来设置，分别是 http 头信息中的Expires 属性和 Cache-Control 属性。服务器通过在响应头中添加 Expires 属性，来指定资源的过期时间。在过期时间以内，该资源可以被缓存使用，不必再向服务器发送请求。这个时间是一个绝对时间，它是服务器的时间，因此可能存在这样的问题，就是客户端的时间和服务器端的时间不一致，或者用户可以对客户端时间进行修改的情况，这样就可能会影响缓存命中的结果。Expires 是 http1.0 中的方式，因为它的一些缺点，在 HTTP1.1 中提出了一个新的头部属性就是 Cache-Control 属性，它提供了对资源的缓存的更精确的控制。它有很多不同的值，Cache-Control 可设置的字段：</p>
+<ul>
+<li>public：设置了该字段值的资源表示可以被任何对象（包括：发送请求的客户端、代理服务器等等）缓存。这个字段值不常用，一般还是使用 max-age=来精确控制；</li>
+<li>private：设置了该字段值的资源只能被用户浏览器缓存，不允许任何代理服务器缓存。在实际开发当中，对于一些含有用户信息的HTML，通常都要设置这个字段值，避免代理服务器(CDN)缓存；</li>
+<li>no-cache：设置了该字段需要先和服务端确认返回的资源是否发生了变化，如果资源未发生变化，则直接使用缓存好的资源；</li>
+<li>no-store：设置了该字段表示禁止任何缓存，每次都会向服务端发起新的请求，拉取最新的资源；</li>
+<li>max-age=：设置缓存的最大有效期，单位为秒；</li>
+<li>s-maxage=：优先级高于 max-age=，仅适用于共享缓存(CDN)，优先级高于 max-age 或者 Expires 头；</li>
+<li>max-stale[=]：设置了该字段表明客户端愿意接收已经过期的资源，但是不能超过给定的时间限制。</li>
+</ul>
+<p>no-cache 和 no-store 很容易混淆，no-cache 是指先要和服务器确认是否有资源更新，在进行判断。也就是说没有强缓存，但是会有协商缓存；no-store 是指不使用任何缓存，每次请求都直接从服务器获取资源。一般来说只需要设置其中一种方式就可以实现强缓存策略，当两种方式一起使用时，Cache-Control 的优先级要高于 Expires。</p>
+</li>
+<li>
+<p><strong>协商缓存</strong></p>
+<p>如果命中强制缓存，我们无需发起新的请求，直接使用缓存内容，如果没有命中强制缓存，如果设置了协商缓存，这个时候协商缓存就会发挥作用了。命中协商缓存的条件有两个：</p>
+<ul>
+<li>max-age=xxx 过期了</li>
+<li>值为 no-store</li>
+</ul>
+<p>使用协商缓存策略时，会先向服务器发送一个请求，如果资源没有发生修改，则返回一个 304 状态，让浏览器使用本地的缓存副本。如果资源发生了修改，则返回修改后的资源。协商缓存也可以通过两种方式来设置，分别是 http 头信息中的Etag 和 Last-Modified 属性：</p>
+<ul>
+<li>服务器通过在响应头中添加 Last-Modified 属性来指出资源最后一次修改的时间，当浏览器下一次发起请求时，会在请求头中添加一个 If-Modified-Since 的属性，属性值为上一次资源返回时的Last-Modified 的值。当请求发送到服务器后服务器会通过这个属性来和资源的最后一次的修改时间来进行比较，以此来判断资源是否做了修改。如果资源没有修改，那么返回 304 状态，让客户端使用本地的缓存。如果资源已经被修改了，则返回修改后的资源。使用这种方法有一个缺点，就是 Last-Modified 标注的最后修改时间只能精确到秒级，如果某些文件在 1 秒钟以内，被修改多次的话，那么文件已将改变了但是 Last-Modified 却没有改变，这样会造成缓存命中的不准确。</li>
+<li>因为 Last-Modified 的这种可能发生的不准确性，http 中提供了另外一种方式，那就是 Etag 属性。服务器在返回资源的时候，在头信息中添加了 Etag 属性，这个属性是资源生成的唯一标识符，当资源发生改变的时候，这个值也会发生改变。在下一次资源请求时，浏览器会在请求头中添加一个 If-None-Match 属性，这个属性的值就是上次返回的资源的 Etag 的值。服务接收到请求后会根据这个值来和资源当前的 Etag 的值来进行比较，以此来判断资源是否发生改变，是否需要返回资源。通过这种方式，比 Last-Modified 的方式更加精确。</li>
+</ul>
+<p>当 Last-Modified 和 Etag 属性同时出现的时候，Etag 的优先级更高。使用协商缓存的时候，服务器需要考虑负载平衡的问题，因此多个服务器上资源的 Last-Modified 应该保持一致，因为每个服务器上 Etag 的值都不一样，因此在考虑负载平衡时，最好不要设置 Etag属性。</p>
+</li>
+<li>
+<p><strong>浏览器缓存过程</strong></p>
+<ul>
+<li>浏览器第一次加载资源，服务器返回 200，浏览器从服务器下载资源文件，并缓存资源文件与 response header，以供下次加载时对比使用；</li>
+<li>下一次加载资源时，由于强制缓存优先级较高，先比较当前时间与上一次返回 200 时的时间差，如果没有超过 cache-control 设置的max-age，则没有过期，并命中强缓存，直接从本地读取资源。如果浏览器不支持 HTTP1.1，则使用 expires 头判断是否过期；</li>
+<li>如果资源已过期，则表明强制缓存没有被命中，则开始协商缓存，向服务器发送带有 If-None-Match 和 If-Modified-Since 的请求；服务器收到请求后，优先根据 Etag 的值判断被请求的文件有没有做修改，Etag 值一致则没有修改，命中协商缓存，返回 304；如果不一致则有改动，直接返回新的资源文件带上新的 Etag 值并返回 200；</li>
+<li>如果服务器收到的请求没有 Etag 值，则将 If-Modified-Since 和被请求文件的最后修改时间做比对，一致则命中协商缓存，返回 304；不一致则返回新的 last-modified 和文件并返回 200；</li>
+</ul>
+<p>很多网站的资源后面都加了版本号，这样做的目的是：每次升级了 JS或 CSS 文件后，为了防止浏览器进行缓存，强制改变版本号，客户端浏览器就会重新下载新的 JS 或 CSS 文件 ，以保证用户能够及时获得网站的最新更新。</p>
+<p>总结：强缓存策略和协商缓存策略在缓存命中时都会直接使用本地的缓存副本，区别只在于协商缓存会向服务器发送一次请求。它们缓存不命中时，都会向服务器发送请求来获取资源。在实际的缓存机制中，强缓存策略和协商缓存策略是一起合作使用的。浏览器首先会根据请求的信息判断，强缓存是否命中，如果命中则直接使用资源。如果不命中则根据头信息向服务器发起请求，使用协商缓存，如果协商缓存命中的话，则服务器不返回资源，浏览器直接使用本地资源的副本，如果协商缓存不命中，则浏览器返回最新的资源给浏览器。</p>
+</li>
+</ol>
+<h2 id="不同刷新的区别" tabindex="-1"><a class="header-anchor" href="#不同刷新的区别"><span>不同刷新的区别</span></a></h2>
+<ol>
+<li>
+<p><strong>点击刷新按钮或者F5</strong></p>
+<p>浏览器直接对本地的缓存文件过期，但是会带上 If-Modifed-Since，If-None-Match，这就意味着服务器会对文件检查新鲜度，返回结果可能是 304，也有可能是 200。</p>
+</li>
+<li>
+<p><strong>Ctrl+F5</strong></p>
+<p>浏览器不仅会对本地文件过期，而且不会带上 If-Modifed-Since，If-None-Match，相当于之前从来没有请求过，返回结果是 200。</p>
+</li>
+<li>
+<p><strong>地址栏回车</strong></p>
+<p>浏览器发起请求，按照正常流程，本地检查是否过期，然后服务器检查新鲜度，最后返回内容</p>
+</li>
+</ol>
+<h2 id="浏览器内多个标签页之间的如何通信" tabindex="-1"><a class="header-anchor" href="#浏览器内多个标签页之间的如何通信"><span>浏览器内多个标签页之间的如何通信</span></a></h2>
+<ol>
+<li>
+<p><strong>cookie+setInterval</strong></p>
+<p>将要传递的信息存储在cookie中，每隔一定时间读取cookie信息， 即可随时获取要传递的信息。</p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line">document<span class="token punctuation">.</span>cookie <span class="token operator">=</span> <span class="token string">"name="</span> <span class="token operator">+</span> name<span class="token punctuation">;</span> <span class="token comment">// 设置 cookie</span></span>
+<span class="line"><span class="token keyword">function</span> <span class="token function">getCookie</span><span class="token punctuation">(</span><span class="token parameter">key</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// 获取 cookie</span></span>
+<span class="line">  <span class="token keyword">const</span> _string <span class="token operator">=</span> <span class="token string">'{"'</span><span class="token punctuation">;</span></span>
+<span class="line">  _string <span class="token operator">+=</span> document<span class="token punctuation">.</span>cookie<span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">;\s+</span><span class="token regex-delimiter">/</span><span class="token regex-flags">gim</span></span><span class="token punctuation">,</span> <span class="token string">'","'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">=</span><span class="token regex-delimiter">/</span><span class="token regex-flags">gim</span></span><span class="token punctuation">,</span> <span class="token string">'":"'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">  _string <span class="token operator">+=</span> <span class="token string">'"}'</span><span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">;</span></span>
+<span class="line">  <span class="token keyword">return</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>_string<span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p><strong>localStorage</strong></p>
+<p>使用localStorage 的方式，我们可以在一个标签页对 localStorage的变化事件进行监听，然后当另一个标签页修改数据的时候，我们就可以通过这个监听事件来获取到数据。这个时候 localStorage 对象就是充当的中介者的角色。</p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line">localStorage<span class="token punctuation">.</span><span class="token function">setItem</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span>value<span class="token punctuation">)</span>  <span class="token comment">// 添加</span></span>
+<span class="line">localStorage<span class="token punctuation">.</span><span class="token function">removeItem</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span>value<span class="token punctuation">)</span>  <span class="token comment">// 删除</span></span>
+<span class="line">window<span class="token punctuation">.</span><span class="token function-variable function">onload</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// 添加监听 storage 的变化</span></span>
+<span class="line">    window<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'storage'</span><span class="token punctuation">,</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">        console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>event<span class="token punctuation">.</span>key <span class="token operator">+</span> <span class="token string">'='</span> <span class="token operator">+</span> event<span class="token punctuation">.</span>newValue<span class="token punctuation">)</span><span class="token punctuation">;</span>   <span class="token comment">// event 事件对象包含 domain newValue oldValue key</span></span>
+<span class="line">    <span class="token punctuation">}</span><span class="token punctuation">)</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p><strong>postMessage</strong></p>
+<p>使用 postMessage 方法，如果我们能够获得对应标签页的引用，就可以使用 postMessage</p>
+</li>
+<li>
+<p><strong>websocket</strong></p>
+<p>使用 websocket 协议，因为 websocket 协议可以实现服务器推送，所以服务器就可以用来当做这个中介者。标签页通过向服务器发送数据，然后由服务器向其他标签页推送转发。</p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line"><span class="token keyword">const</span> socket <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Websocket</span><span class="token punctuation">(</span><span class="token string">"ws://localhost:8080"</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Create WebSocket connection.</span></span>
+<span class="line">socket<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"open"</span><span class="token punctuation">,</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// Connection opened </span></span>
+<span class="line">  socket<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">"Hello Server!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">socket<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"message "</span><span class="token punctuation">,</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// Listen for messages</span></span>
+<span class="line">  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">"Message from server "</span><span class="token punctuation">,</span> event<span class="token punctuation">.</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p><strong>shareWorker</strong></p>
+<p>使用 ShareWorker 的方式，shareWorker 会在页面存在的生命周期内创建一个唯一的线程，并且开启多个页面也只会使用同一个线程。这个时候共享线程就可以充当中介者的角色。标签页间通过共享一个线程，然后通过这个共享的线程来实现数据的交换。</p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line"><span class="token comment">// shareWorker 所要用到的js文件，不必打包到项目中，直接放到服务器即可</span></span>
+<span class="line"><span class="token keyword">let</span> data <span class="token operator">=</span> <span class="token string">" "</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token keyword">let</span> <span class="token function-variable function">onconnect</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token keyword">let</span> port <span class="token operator">=</span> event<span class="token punctuation">.</span>ports<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span></span>
+<span class="line">  port<span class="token punctuation">.</span><span class="token function-variable function">onmessage</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">    <span class="token keyword">if</span> <span class="token punctuation">(</span>e<span class="token punctuation">.</span>data <span class="token operator">===</span> <span class="token string">"get"</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">      port<span class="token punctuation">.</span><span class="token function">postMessage</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span></span>
+<span class="line">      data <span class="token operator">=</span> e<span class="token punctuation">.</span>data<span class="token punctuation">;</span></span>
+<span class="line">    <span class="token punctuation">}</span></span>
+<span class="line">  <span class="token punctuation">}</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token punctuation">}</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token keyword">try</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token keyword">var</span> worker <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SharedWorker</span><span class="token punctuation">(</span><span class="token string">"worker.js"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">  <span class="token keyword">var</span> getBtn <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"get"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">  <span class="token keyword">var</span> setBtn <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"set"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">  <span class="token keyword">var</span> txt <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"txt"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">  <span class="token keyword">var</span> log <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">getElementById</span><span class="token punctuation">(</span><span class="token string">"log"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">  worker<span class="token punctuation">.</span>port<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"message"</span><span class="token punctuation">,</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">    log<span class="token punctuation">.</span>innerHTML <span class="token operator">=</span> e<span class="token punctuation">.</span>data<span class="token punctuation">;</span></span>
+<span class="line">    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">" --- 获取到数据 e.data --- "</span><span class="token punctuation">,</span> e<span class="token punctuation">.</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">  worker<span class="token punctuation">.</span>port<span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">  setBtn<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span></span>
+<span class="line">    <span class="token string">"click"</span><span class="token punctuation">,</span></span>
+<span class="line">    <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">      worker<span class="token punctuation">.</span>port<span class="token punctuation">.</span><span class="token function">postMessage</span><span class="token punctuation">(</span>txt<span class="token punctuation">.</span>value<span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">    <span class="token punctuation">}</span><span class="token punctuation">,</span></span>
+<span class="line">    <span class="token boolean">false</span></span>
+<span class="line">  <span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"></span>
+<span class="line">  getBtn<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span></span>
+<span class="line">    <span class="token string">"click"</span><span class="token punctuation">,</span></span>
+<span class="line">    <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">      worker<span class="token punctuation">.</span>port<span class="token punctuation">.</span><span class="token function">postMessage</span><span class="token punctuation">(</span><span class="token string">"get"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">    <span class="token punctuation">}</span><span class="token punctuation">,</span></span>
+<span class="line">    <span class="token boolean">false</span></span>
+<span class="line">  <span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span>error<span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">" --- error --- "</span><span class="token punctuation">,</span> error<span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+</ol>
+<h2 id="对webworker的理解" tabindex="-1"><a class="header-anchor" href="#对webworker的理解"><span>对webWorker的理解</span></a></h2>
+<ol>
+<li>
+<p><strong>概念</strong></p>
+<p>由于JavaScript语言采用的是单线程，同一时刻只能做一件事，如果有多个同步计算任务执行，则在这段同步计算逻辑执行完之前，它下方的代码不会执行，从而造成了阻塞，用户的交互也可能无响应。但如果把这段同步计算逻辑放到Web Worker执行，在这段逻辑计算运行期间依然可以执行它下方的代码，用户的操作也可以响应了。</p>
+<p>HTML5 提供并规范了 Web Worker 这样一套 API，它允许一段 JavaScript 程序运行在主线程之外的另外一个线程（Worker 线程）中。Web Worker 的作用，就是为 JavaScript 创造多线程环境，允许主线程创建 Worker 线程，将一些任务分配给后者运行。这样的好处是，一些计算密集型或高延迟的任务，被 Worker 线程负担了，主线程就会很流畅，不会被阻塞或拖慢。</p>
+</li>
+<li>
+<p><strong>分类</strong></p>
+<p>eb Worker 根据工作环境的不同，可分为专用线程 Dedicated Worker和共享线程 Shared Worker。</p>
+<ul>
+<li>Dedicated Worker的Worker只能从创建该Woker的脚本中访问。在开发中如果使用到 Web Worker，目前大部分主要还是使用 Dedicated Worker的场景多，它只能为一个页面所使用。</li>
+<li>而SharedWorker则可以被多个脚本所访问。Shared Worker可以被多个页面共享，为跨浏览器 tab 共享数据提供了一种解决方案</li>
+</ul>
+</li>
+<li>
+<p><strong>使用限制</strong></p>
+<ul>
+<li>**同源限制。**分配给 Worker 线程运行的脚本文件，必须与主线程的脚本文件同源</li>
+<li>**文件限制。**Worker 线程无法读取本地文件（file://），会拒绝使用 file 协议来创建 Worker实例，它所加载的脚本，必须来自网络</li>
+<li>**DOM 操作限制。**Worker 线程所在的全局对象，与主线程不一样，区别是：无法读取主线程所在网页的 DOM 对象；无法使用document、window、parent这些对象。</li>
+<li>**通信限制。**Worker 线程和主线程不在同一个上下文环境，它们不能直接通信，必须通过消息完成，交互方法是postMessage和onMessage，并且在数据传递的时候， Worker 是使用拷贝的方式</li>
+<li>**脚本限制。**Worker 线程不能执行alert()方法和confirm()方法，但可以使用 XMLHttpRequest 对象发出 AJAX 请求，也可以使用setTimeout/setInterval等API</li>
+</ul>
+</li>
+<li>
+<p>基本 API</p>
+<ul>
+<li>
+<p>创建webWorker</p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line"><span class="token keyword">const</span> worker <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Worker</span><span class="token punctuation">(</span>aURL<span class="token punctuation">,</span> options<span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div></div></div></li>
+<li>
+<p>worker.postMessage: 向 worker 的内部作用域发送一个消息，消息可由任何 JavaScript 对象组成</p>
+</li>
+<li>
+<p>worker.terminate: 立即终止 worker。该方法并不会等待 worker 去完成它剩余的操作；worker 将会被立刻停止</p>
+</li>
+<li>
+<p>worker.onmessage:当 worker 的父级接收到来自其 worker 的消息时，会在 Worker 对象上触发 message 事件</p>
+</li>
+<li>
+<p>worker.onerror: 当 worker 出现运行中错误时，它的 onerror 事件处理函数会被调用。它会收到一个扩展了 ErrorEvent 接口的名为 error 的事件</p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line">worker<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'error'</span><span class="token punctuation">,</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span>message<span class="token punctuation">)</span> <span class="token comment">// 可读性良好的错误消息</span></span>
+<span class="line">    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span>filename<span class="token punctuation">)</span> <span class="token comment">// 发生错误的脚本文件名</span></span>
+<span class="line">    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span>lineno<span class="token punctuation">)</span> <span class="token comment">// 发生错误时所在脚本文件的行号</span></span>
+<span class="line"><span class="token punctuation">}</span><span class="token punctuation">)</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+</ul>
+</li>
+<li>
+<p>常见使用方式</p>
+<ul>
+<li>
+<p><strong>直接指定脚本文件</strong></p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line"><span class="token comment">// 主线程下创建worker线程</span></span>
+<span class="line"><span class="token keyword">const</span> worker <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Worker</span><span class="token punctuation">(</span><span class="token string">'./worker.js'</span><span class="token punctuation">)</span></span>
+<span class="line"><span class="token comment">// 监听接收worker线程发的消息</span></span>
+<span class="line">worker<span class="token punctuation">.</span><span class="token function-variable function">onmessage</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'主线程收到worker线程消息：'</span><span class="token punctuation">,</span> e<span class="token punctuation">.</span>data<span class="token punctuation">)</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"><span class="token comment">// 向worker线程发送消息</span></span>
+<span class="line">worker<span class="token punctuation">.</span><span class="token function">postMessage</span><span class="token punctuation">(</span><span class="token string">'主线程发送hello world'</span><span class="token punctuation">)</span></span>
+<span class="line"><span class="token comment">//worker.js：</span></span>
+<span class="line"><span class="token comment">// self 代表子线程自身，即子线程的全局对象</span></span>
+<span class="line">self<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"message"</span><span class="token punctuation">,</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token comment">// e.data表示主线程发送过来的数据</span></span>
+<span class="line">  self<span class="token punctuation">.</span><span class="token function">postMessage</span><span class="token punctuation">(</span><span class="token string">"worker线程收到的："</span> <span class="token operator">+</span> e<span class="token punctuation">.</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 向主线程发送消息</span></span>
+<span class="line"><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p><strong>使用 Blob URL 创建</strong></p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line"><span class="token doc-comment comment">/**</span>
+<span class="line"> * const blob = new Blob(array, options);</span>
+<span class="line"> * Blob() 构造函数返回一个新的 Blob 对象。blob 的内容由参数数组中给出的值的串联组成。</span>
+<span class="line"> * <span class="token keyword">@params</span> array 是一个由ArrayBuffer, ArrayBufferView, Blob, DOMString 等对象构成的 Array</span>
+<span class="line"> * <span class="token keyword">@options</span> type，默认值为 ""，它代表了将会被放入到 blob 中的数组内容的 MIME 类型。还有两个这里忽略不列举了</span>
+<span class="line"> */</span></span>
+<span class="line"><span class="token doc-comment comment">/**</span>
+<span class="line"> * URL.createObjectURL()：静态方法会创建一个 DOMString，其中包含一个表示参数中给出的对象的 URL。这个 URL 的生命周期和创建它的窗口中的 document 绑定。这个新的 URL 对象表示指定的 File 对象或 Blob 对象</span>
+<span class="line"> */</span></span>
+<span class="line"><span class="token keyword">const</span> worker <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Worker</span><span class="token punctuation">(</span><span class="token constant">URL</span><span class="token punctuation">.</span><span class="token function">createObjectURL</span><span class="token punctuation">(</span>blob<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p><strong>Worker 线程中引入脚本</strong></p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line"><span class="token comment">// --------------worker.js------------------</span></span>
+<span class="line"><span class="token function">importScripts</span><span class="token punctuation">(</span><span class="token string">"constants.js"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token comment">// self 代表子线程自身，即子线程的全局对象</span></span>
+<span class="line">self<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"message"</span><span class="token punctuation">,</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">  self<span class="token punctuation">.</span><span class="token function">postMessage</span><span class="token punctuation">(</span>foo<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 可拿到 `foo`、`getAge()`、`getName`的结果值 </span></span>
+<span class="line"><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token comment">// ---------------constants.js------------------</span></span>
+<span class="line"><span class="token keyword">const</span> foo <span class="token operator">=</span> <span class="token string">"变量"</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token keyword">function</span> <span class="token function">getAge</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token keyword">return</span> <span class="token number">25</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token punctuation">}</span></span>
+<span class="line"><span class="token keyword">const</span> <span class="token function-variable function">getName</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token keyword">return</span> <span class="token string">"jacky"</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token punctuation">}</span><span class="token punctuation">;</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+</ul>
+</li>
+</ol>
+<h2 id="http-和-https-协议的区别" tabindex="-1"><a class="header-anchor" href="#http-和-https-协议的区别"><span>HTTP 和 HTTPS 协议的区别</span></a></h2>
+<ol>
+<li>
+<p><strong>http</strong></p>
+<p>HTTP (HyperText Transfer Protocol)，即超文本运输协议，是实现网络通信的一种规范。HTTP是一个传输协议，即将数据由A传到B或将B传输到A，并且 A 与 B 之间能够存放很多第三方。传输的数据并不是计算机底层中的二进制包，而是完整的、有意义的数据，如HTML 文件, 图片文件, 查询结果等超文本，能够被上层应用识别。在实际应用中，HTTP常被用于在Web浏览器和网站服务器之间传递信息，以明文方式发送内容，不提供任何方式的数据加密。特点如下：</p>
+<ul>
+<li>支持客户/服务器模式</li>
+<li>简单快速：客户向服务器请求服务时，只需传送请求方法和路径。由于HTTP协议简单，使得HTTP服务器的程序规模小，因而通信速度很快</li>
+<li>灵活：HTTP允许传输任意类型的数据对象。正在传输的类型由Content-Type加以标记</li>
+<li>无连接：无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间</li>
+<li>无状态：HTTP协议无法根据之前的状态进行本次的请求处理</li>
+</ul>
+</li>
+<li>
+<p><strong>https</strong></p>
+<p>超文本传输安全协议（Hypertext Transfer Protocol Secure，简称：HTTPS）是一种通过计算机网络进行安全通信的传输协议。HTTPS 经由 HTTP 进行通信，利用 SSL/TLS 来加密数据包。HTTPS 的主要目的是提供对网站服务器的身份认证，保护交换数据的隐私与完整性。HTTP 协议采用明文传输信息，存在信息窃听、信息篡改和信息劫持的风险，而协议 TLS/SSL 具有身份验证、信息加密和完整性校验的功能，可以避免此类问题发生。安全层的主要职责就是对发起的 HTTP 请求的数据进行加密操作 和对接收到的 HTTP 的内容进行解密操作。流程图如下所示：</p>
+<ul>
+<li>首先客户端通过URL访问服务器建立SSL连接</li>
+<li>服务端收到客户端请求后，会将网站支持的证书信息（证书中包含公钥）传送一份给客户端</li>
+<li>客户端的服务器开始协商SSL连接的安全等级，也就是信息加密的等级</li>
+<li>客户端的浏览器根据双方同意的安全等级，建立会话密钥，然后利用网站的公钥将会话密钥加密，并传送给网站</li>
+<li>服务器利用自己的私钥解密出会话密钥</li>
+<li>服务器利用会话密钥加密与客户端之间的通信</li>
+</ul>
+</li>
+<li>
+<p><strong>区别</strong></p>
+<ul>
+<li>HTTPS 协议需要 CA 证书，费用较高；而 HTTP 协议不需要；</li>
+<li>HTTP 协议是超文本传输协议，信息是明文传输的，HTTPS 则是具有安全性的 SSL 加密传输协议；</li>
+<li>使用不同的连接方式，端口也不同，HTTP 协议端口是 80，HTTPS 协议端口是 443；</li>
+<li>HTTPS 由于需要设计加密以及多次握手，性能方面不如 HTTP</li>
+</ul>
+</li>
+</ol>
+<h2 id="http1-0-1-1-2-0-3-0-的区别" tabindex="-1"><a class="header-anchor" href="#http1-0-1-1-2-0-3-0-的区别"><span>HTTP1.0/1.1/2.0/3.0 的区别</span></a></h2>
+<ol>
+<li>
+<p><strong>http1.0</strong></p>
+<ul>
+<li><strong>短连接</strong>：HTTP协议的第二个版本，第一个在通讯中指定版本号的HTTP协议版本。HTTP 1.0 浏览器与服务器只保持短暂的连接，每次请求都需要与服务器建立一个TCP连接。服务器完成请求处理后立即断开TCP连接，服务器不跟踪每个客户也不记录过去的请求。简单来讲，每次与服务器交互，都需要新开一个连接。解析html文件，当发现文件中存在资源文件的时候，这时候又创建单独的链接。最终导致，一个html文件的访问包含了多次的请求和响应，每次请求都需要创建连接、关系连接。这种形式明显造成了性能上的缺陷</li>
+<li>如果需要建立长连接，需要设置一个非标准的Connection字段 Connection: keep-alive</li>
+</ul>
+</li>
+<li>
+<p><strong>http1.1</strong></p>
+<ul>
+<li>
+<p><strong>持久连接，同时发送多个请求</strong></p>
+<p>在HTTP1.1中，默认支持长连接（Connection: keep-alive），即在一个TCP连接上可以传送多个HTTP请求和响应，减少了建立和关闭连接的消耗和延迟。建立一次连接，多次请求均由这个连接完成。这样，在加载html文件的时候，文件中多个请求和响应就可以在一个连接中传输。</p>
+</li>
+<li>
+<p><strong>数据通信是按次序进行</strong>。</p>
+<p>同时，HTTP 1.1还允许客户端不用等待上一次请求结果返回，就可以发出下一次请求，但服务器端必须按照接收到客户端请求的先后顺序依次回送响应结果，以保证客户端能够区分出每次请求的响应内容，这样也显著地减少了整个下载过程所需要的时间。</p>
+</li>
+<li>
+<p><strong>新增了一些请求头和响应头</strong></p>
+<p>同时，HTTP1.1在HTTP1.0的基础上，增加更多的请求头和响应头来完善的功能，如下：</p>
+<ul>
+<li>引入了更多的缓存控制策略，如If-Unmodified-Since, If-Match, If-None-Match等缓存头来控制缓存策略</li>
+<li>引入range，允许值请求资源某个部分</li>
+<li>引入host，实现了在一台WEB服务器上可以在同一个IP地址和端口号上使用不同的主机名来创建多个虚拟WEB站点</li>
+</ul>
+</li>
+<li>
+<p><strong>新增了一些请求方法</strong></p>
+<p>并且还添加了其他的请求方法：put、delete、options..</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>http2.0</strong></p>
+<ul>
+<li>
+<p><strong>多路复用</strong></p>
+<p>HTTP/2 实现了多路复用，HTTP/2 仍然复用 TCP 连接，但是在一个连接里，客户端和服务器都可以同时发送多个请求或回应，而且不用按照顺序一一发送，这样就避免了&quot;队头堵塞&quot;的问题。</p>
+</li>
+<li>
+<p><strong>二进制协议</strong></p>
+<p>HTTP/2 是一个二进制协议。在 HTTP/1.1 版中，报文的头信息必须是文本（ASCII 编码），数据体可以是文本，也可以是二进制。HTTP/2 则是一个彻底的二进制协议，头信息和数据体都是二进制，并且统称为&quot;帧&quot;，可以分为头信息帧和数据帧。 帧的概念是它实现多路复用的基础</p>
+</li>
+<li>
+<p><strong>数据流</strong></p>
+<p>HTTP/2 使用了数据流的概念，因为 HTTP/2 的数据包是不按顺序发送的，同一个连接里面连续的数据包，可能属于不同的请求。因此，必须要对数据包做标记，指出它属于哪个请求。HTTP/2 将每个请求或回应的所有数据包，称为一个数据流。每个数据流都有一个独一无二的编号。数据包发送时，都必须标记数据流 ID ，用来区分它属于哪个数据流。</p>
+</li>
+<li>
+<p><strong>首部压缩</strong></p>
+<p>HTTP/2在客户端和服务器端使用“首部表”来跟踪和存储之前发送的键值对，对于相同的数据，不再通过每次请求和响应发送。首部表在HTTP/2的连接存续期内始终存在，由客户端和服务器共同渐进地更新。</p>
+<p>HTTP2 的头部压缩是 HPACK 算法。在客户端和服务器两端建立“字典”，用索引号表示重复的字符串，采用哈夫曼编码来压缩整数和字符串，可以达到 50%~90%的高压缩率。具体来说:</p>
+<ul>
+<li>在客户端和服务器端使用“首部表”来跟踪和存储之前发送的键值对，对于相同的数据，不再通过每次请求和响应发送；</li>
+<li>首部表在 HTTP/2 的连接存续期内始终存在，由客户端和服务器共同渐进地更新；</li>
+<li>每个新的首部键值对要么被追加到当前表的末尾，要么替换表中之前的值。</li>
+</ul>
+</li>
+<li>
+<p><strong>服务器推送</strong></p>
+<p>HTTP2引入服务器推送，允许服务端推送资源给客户端。服务器会顺便把一些客户端需要的资源一起推送到客户端，如在响应一个页面请求中，就可以随同页面的其它资源。免得客户端再次创建连接发送请求到服务器端获取。这种方式非常合适加载静态资源</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>http3.0</strong></p>
+<p>HTTP/3 基于 UDP 协议实现了类似于 TCP 的多路复用数据流、传输可靠性等功能，这套功能被称为 QUIC 协议。</p>
+<ul>
+<li>流量控制、传输可靠性功能：QUIC 在 UDP 的基础上增加了一层来保证数据传输可靠性，它提供了数据包重传、拥塞控制、以及其他一些 TCP 中的特性。</li>
+<li>集成 TLS 加密功能：目前 QUIC 使用 TLS1.3，减少了握手所花费的RTT 数。</li>
+<li>多路复用：同一物理连接上可以有多个独立的逻辑数据流，实现了数据流的单独传输，解决了 TCP 的队头阻塞问题</li>
+<li>快速握手：由于基于 UDP，可以实现使用 0 ~ 1个RTT来建立连接</li>
+</ul>
+</li>
+</ol>
+<h2 id="http-常见的状态码" tabindex="-1"><a class="header-anchor" href="#http-常见的状态码"><span>HTTP 常见的状态码</span></a></h2>
+<ol>
+<li>
+<p><strong>状态码</strong></p>
+<p>HTTP状态码（英语：HTTP Status Code），用以表示网页服务器超文本传输协议响应状态的3位数字代码</p>
+<p>它由 RFC 2616规范定义的，并得到 RFC 2518、RFC 2817、RFC 2295、RFC 2774与 RFC 4918等规范扩展</p>
+<p>简单来讲，http状态码的作用是服务器告诉客户端当前请求响应的状态，通过状态码就能判断和分析服务器的运行状态</p>
+</li>
+<li>
+<p>分类</p>
+<ul>
+<li>
+<p><strong>1xx表示消息</strong></p>
+<p>代表请求已被接受，需要继续处理，这类响应是临时响应，只包含状态行和某些可选的响应头信息，并以空行结束。常见的有：</p>
+<ul>
+<li>100（这个临时响应是用来通知客户端它的部分请求已经被服务器接收，且仍未被拒绝，客户端应当继续发送请求的剩余部分，或者如果请求已经完成，忽略这个响应。服务器必须在请求完成后向客户端发送一个最终响应）、</li>
+<li>101（服务器根据客户端的请求切换协议，主要用于websocket或http2升级）</li>
+</ul>
+</li>
+<li>
+<p><strong>2xx表示成功</strong></p>
+<p>代表请求已成功被服务器接收、理解、并接受。常见的有:</p>
+<ul>
+<li>200（成功，请求已成功，请求所希望的响应头或数据体将随此响应返回）</li>
+<li>201（已创建，请求成功并且服务器创建了新的资源）</li>
+<li>202（已创建，服务器已经接收请求，但尚未处理）</li>
+<li>203（非授权信息，服务器已成功处理请求，但返回的信息可能来自另一来源）</li>
+<li>204（无内容，服务器成功处理请求，但没有返回任何内容）</li>
+<li>205（重置内容，服务器成功处理请求，但没有返回任何内容）</li>
+<li>206（部分内容，服务器成功处理了部分请求）</li>
+</ul>
+</li>
+<li>
+<p><strong>3xx表示重定向</strong></p>
+<p>3xx：表示要完成请求，需要进一步操作， 通常，这些状态代码用来重定向。常见的有:</p>
+<ul>
+<li>300（多种选择）：针对请求，服务器可执行多种操作。 服务器可根据请求者 (user agent) 选择一项操作，或提供操作列表供请求者选择</li>
+<li>301（永久移动）：请求的网页已永久移动到新位置。 服务器返回此响应（对 GET 或 HEAD 请求的响应）时，会自动将请求者转到新位置</li>
+<li>302（临时移动）：服务器目前从不同位置的网页响应请求，但请求者应继续使用原有位置来进行以后的请求</li>
+<li>303（查看其他位置）：请求者应当对不同的位置使用单独的 GET 请求来检索响应时，服务器返回此代码</li>
+<li>304（未修改）：</li>
+<li>305（使用代理）：请求者只能使用代理访问请求的网页。 如果服务器返回此响应，还表示请求者应使用代理</li>
+<li>307（临时重定向）：服务器目前从不同位置的网页响应请求，但请求者应继续使用原有位置来进行以后的请求</li>
+</ul>
+</li>
+<li>
+<p><strong>4xx表示请求错误</strong></p>
+<p>代表了客户端看起来可能发生了错误，妨碍了服务器的处理。常见的有:</p>
+<ul>
+<li>400（错误请求）：服务器不理解请求的语法</li>
+<li>401（未授权）：请求要求身份验证。 对于需要登录的网页，服务器可能返回此响应。</li>
+<li>403（禁止）：服务器拒绝请求</li>
+<li>404（未找到）：服务器找不到请求的网页</li>
+<li>405（方法禁用）：禁用请求中指定的方法</li>
+<li>406（不接受）：无法使用请求的内容特性响应请求的网页</li>
+<li>407（需要代理授权）：此状态代码与 401（未授权）类似，但指定请求者应当授权使用代理</li>
+<li>408（请求超时）：服务器等候请求时发生超时</li>
+</ul>
+</li>
+<li>
+<p><strong>5xx表示服务器错误</strong></p>
+<p>表示服务器无法完成明显有效的请求，这类状态码代表了服务器在处理请求的过程中有错误或者异常状态发生。常见的有：</p>
+<ul>
+<li>500（服务器内部错误）：服务器遇到错误，无法完成请求</li>
+<li>501（尚未实施）：服务器不具备完成请求的功能。 例如，服务器无法识别请求方法时可能会返回此代码</li>
+<li>502（错误网关）：服务器作为网关或代理，从上游服务器收到无效响应</li>
+<li>503（服务不可用）：服务器目前无法使用（由于超载或停机维护）</li>
+<li>504（网关超时）：服务器作为网关或代理，但是没有及时从上游服务器收到请求</li>
+<li>505（HTTP 版本不受支持）：服务器不支持请求中所用的 HTTP 协议版本</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>使用场景</p>
+<ul>
+<li>100：客户端在发送POST数据给服务器前，征询服务器情况，看服务器是否处理POST的数据，如果不处理，客户端则不上传POST数据，如果处理，则POST上传数据。常用于POST大数据传输；</li>
+<li>206：一般用来做断点续传，或者是视频文件等大文件的加载；</li>
+<li>301：永久重定向会缓存。新域名替换旧域名，旧的域名不再使用时，用户访问旧域名时用301就重定向到新的域名；</li>
+<li>302：临时重定向不会缓存，常用 于未登陆的用户访问用户中心重定向到登录页面；</li>
+<li>304：协商缓存，告诉客户端有缓存，直接使用缓存中的数据，返回页面的只有头部信息，是没有内容部分；</li>
+<li>400：参数有误，请求无法被服务器识别；</li>
+<li>403：告诉客户端禁止访问该站点或者资源，如在外网环境下，然后访问只有内网IP才能访问的时候则返回；</li>
+<li>404：服务器找不到资源时，或者服务器拒绝请求又不想说明理由时；</li>
+<li>503：服务器停机维护时，主动用503响应请求或 nginx 设置限速，超过限速，会返回503；</li>
+<li>504：网关超时</li>
+</ul>
+</li>
+</ol>
+<h2 id="http-请求方法" tabindex="-1"><a class="header-anchor" href="#http-请求方法"><span>HTTP 请求方法</span></a></h2>
+<ol>
+<li>常见方法
+<ul>
+<li><strong>GET</strong>：向服务器获取数据</li>
+<li><strong>POST</strong>：将实体提交到指定的资源，通常会造成服务器资源的修改</li>
+<li><strong>PUT</strong>：上传文件，更新数据</li>
+<li><strong>DELETE</strong>：删除服务器上的对象</li>
+<li><strong>HEAD</strong>：取报文首部，与 GET 相比，不返回报文主体部分</li>
+<li><strong>OPTIONS</strong>：询问支持的请求方法，用来跨域请求</li>
+<li><strong>CONNECT</strong>：要求在与代理服务器通信时建立隧道，使用隧道进行 TCP通信</li>
+<li><strong>TRACE</strong>：回显服务器收到的请求，主要⽤于测试或诊断</li>
+</ul>
+</li>
+<li><strong>Post和Get的区别</strong>
+<ul>
+<li>GET在浏览器回退时是无害的，而POST会再次提交请求。</li>
+<li>GET产生的URL地址可以被Bookmark，而POST不可以。</li>
+<li>GET请求会被浏览器主动cache，而POST不会，除非手动设置。</li>
+<li>GET请求只能进行url编码，而POST支持多种编码方式。</li>
+<li>GET请求参数会被完整保留在浏览器历史记录里，而POST中的参数不会被保留。</li>
+<li>GET请求在URL中传送的参数是有长度限制的，而POST没有。</li>
+<li>对参数的数据类型，GET只接受ASCII字符，而POST没有限制。</li>
+<li>GET比POST更不安全，因为参数直接暴露在URL上，所以不能用来传递敏感信息。</li>
+<li>GET参数通过URL传递，POST放在Request body中</li>
+</ul>
+</li>
+<li><strong>Post和Put的区别</strong>
+<ul>
+<li>PUT 请求是向服务器端发送数据，从而修改数据的内容，但是不会增加数据的种类等，也就是说无论进行多少次 PUT 操作，其结果并没有不同。（可以理解为时更新数据）</li>
+<li>POST 请求是向服务器端发送数据，该请求会改变数据的种类等资源，它会创建新的内容。（可以理解为是创建数据）</li>
+</ul>
+</li>
+</ol>
+<h2 id="常见的-http-请求头和响应头" tabindex="-1"><a class="header-anchor" href="#常见的-http-请求头和响应头"><span>常见的 HTTP 请求头和响应头</span></a></h2>
+<ol>
+<li><strong>请求头</strong>
+<ul>
+<li>Accept:浏览器能够处理的内容类型</li>
+<li>Accept-Charset:浏览器能够显示的字符集</li>
+<li>Accept-Encoding：浏览器能够处理的压缩编码</li>
+<li>Accept-Language：浏览器当前设置的语言</li>
+<li>Connection：浏览器与服务器之间连接的类型</li>
+<li>Cookie：当前页面设置的任何 Cookie</li>
+<li>Host：发出请求的页面所在的域</li>
+<li>Referer：发出请求的页面的 URL</li>
+<li>User-Agent：浏览器的用户代理字符串</li>
+<li>If-Modified-Since: 本地资源未修改返回 304（比较时间）</li>
+<li>If-None-Match:本地资源未修改返回 304（比较标记）</li>
+</ul>
+</li>
+<li><strong>响应头</strong>
+<ul>
+<li>Date：表示消息发送的时间，时间的描述格式由 rfc822 定义</li>
+<li>server:服务器名称</li>
+<li>Connection：浏览器与服务器之间连接的类型</li>
+<li>Cache-Control：控制 HTTP 缓存</li>
+<li>content-type:表示后面的文档属于什么 MIME 类型</li>
+<li>ETag：资源标识，资源发生变化时标识也会发生改变</li>
+<li>Last_modified：内容的最后修改时间</li>
+<li>Expires：内容的过期时间</li>
+</ul>
+</li>
+</ol>
+<h2 id="常见的content-type类型" tabindex="-1"><a class="header-anchor" href="#常见的content-type类型"><span>常见的Content-Type类型</span></a></h2>
+<ol>
+<li>
+<p><strong>application/x-www-form-urlencoded</strong></p>
+<p>浏览器的原生 form 表单，如果不设置enctype属性，那么最终就会以application/x-www-form-urlencoded 方式提交数据。该种方式提交的数据放在 body 里面，数据按照 key1=val1&amp;key2=val2 的方式进行编码，key 和 val 都进行了 URL 转码</p>
+</li>
+<li>
+<p><strong>multipart/form-data</strong></p>
+<p>该种方式也是一个常见的 POST 提交方式，通常表单上传文件时使用该种方式。</p>
+</li>
+<li>
+<p><strong>application/json</strong></p>
+<p>服务器消息主体是序列化后的 JSON 字符串</p>
+</li>
+<li>
+<p><strong>text/xml</strong></p>
+<p>该种方式主要用来提交 XML 格式的数据</p>
+</li>
+</ol>
+<h2 id="对跨域的理解" tabindex="-1"><a class="header-anchor" href="#对跨域的理解"><span>对跨域的理解</span></a></h2>
+<ol>
+<li>
+<p><strong>同源策略和跨域</strong></p>
+<p>同源策略是一个重要的安全策略，它用于限制一个 origin 的文档或者它加载的脚本如何能与另一个源的资源进行交互；</p>
+<ul>
+<li>它能帮助阻隔恶意文档，减少可能被攻击的媒介；</li>
+<li>如果两个 URL 的 protocol(协议)、port（端口） 和 host（域名） 都相同的话，则这两个 URL 是同源；</li>
+<li>由于浏览器同源策略的限制，非同源下的请求，都会产生跨域问题</li>
+</ul>
+<p>浏览器从一个域名的网页去请求另一个域名的资源时，域名、端口、协议任一不同，都是跨域</p>
+</li>
+<li>
+<p>解决办法</p>
+<ul>
+<li>
+<p><strong>CORS</strong></p>
+<p>是跨域资源分享（Cross-Origin Resource Sharing）的缩写。它是 W3C 标准，属于跨源 AJAX 请求的根本解决方法。</p>
+<ul>
+<li>普通跨域请求：只需服务器端设置Access-Control-Allow-Origin</li>
+<li>带cookie跨域请求：前后端都需要进行设置。</li>
+</ul>
+<p>前端只需要根据xhr.withCredentials字段判断是否带有cookie</p>
+<div class="language-JS line-numbers-mode" data-highlighter="prismjs" data-ext="JS" data-title="JS"><pre v-pre><code><span class="line">var xhr = new XMLHttpRequest(); // IE8/9需用</span>
+<span class="line">xhr.withCredentials = true;</span>
+<span class="line">xhr.open('post', 'http://www.domain2.com:8080/login', true);</span>
+<span class="line">xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');</span>
+<span class="line">xhr.send('user=admin');</span>
+<span class="line">xhr.onreadystatechange = function() {</span>
+<span class="line">  if (xhr.readyState == 4 &amp;&amp; xhr.status == 200) {</span>
+<span class="line">    alert(xhr.responseText);</span>
+<span class="line">  }</span>
+<span class="line">};</span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>服务端设置：服务器端对于CORS的支持，主要是通过设置Access-Control-Allow-Origin来进行的。如果浏览器检测到相应的设置，就可以允许Ajax进行跨域的访问。</p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line"><span class="token comment">// 允许跨域访问的域名：若有端口需写全（协议+域名+端口），若没有端口末尾不用加'/'</span></span>
+<span class="line">response<span class="token punctuation">.</span><span class="token function">setHeader</span><span class="token punctuation">(</span><span class="token string">"Access-Control-Allow-Origin"</span><span class="token punctuation">,</span> <span class="token string">"http://www.domain1.com"</span><span class="token punctuation">)</span><span class="token punctuation">;</span> </span>
+<span class="line"><span class="token comment">// 允许前端带认证cookie：启用此项后，上面的域名不能为'*'，必须指定具体的域名，否则浏览器会提示</span></span>
+<span class="line">response<span class="token punctuation">.</span><span class="token function">setHeader</span><span class="token punctuation">(</span><span class="token string">"Access-Control-Allow-Credentials"</span><span class="token punctuation">,</span> <span class="token string">"true"</span><span class="token punctuation">)</span><span class="token punctuation">;</span> </span>
+<span class="line"><span class="token comment">// 提示OPTIONS预检时，后端需要设置的两个常用自定义头</span></span>
+<span class="line">response<span class="token punctuation">.</span><span class="token function">setHeader</span><span class="token punctuation">(</span><span class="token string">"Access-Control-Allow-Headers"</span><span class="token punctuation">,</span> <span class="token string">"Content-Type,X-Requested-With"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p><strong>websocket</strong></p>
+<p>是 HTML5 的一个持久化的协议，它实现了浏览器与服务器的全双工通信，同时也是跨域的一种解决方案。WebSocket 和 HTTP 都是应用层协议，都基于 TCP 协议。但是 WebSocket 是一种双向通信协议，在建立连接之后，WebSocket 的 服务器与 客户端都能主动向对方发送或接收数据。同时，WebSocket 在建立连接时需要借助 HTTP 协议，连接建立好了之后 client 与 server 之间的双向通信就与 HTTP 无关了</p>
+</li>
+<li>
+<p><strong>代理服务器</strong></p>
+<p>在webpack.config.js中利用 WebpackDevServer 配置本地代理。</p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line"><span class="token literal-property property">devServer</span><span class="token operator">:</span> <span class="token punctuation">{</span></span>
+<span class="line">    <span class="token literal-property property">port</span><span class="token operator">:</span> <span class="token number">8080</span><span class="token punctuation">,</span></span>
+<span class="line">    <span class="token literal-property property">proxy</span><span class="token operator">:</span> <span class="token punctuation">{</span></span>
+<span class="line">      <span class="token string-property property">"/api"</span><span class="token operator">:</span> <span class="token punctuation">{</span></span>
+<span class="line">       <span class="token literal-property property">target</span><span class="token operator">:</span> <span class="token string">"http://192.168.10.20:8088"</span> <span class="token comment">// 后端接口</span></span>
+<span class="line">      <span class="token punctuation">}</span></span>
+<span class="line">    <span class="token punctuation">}</span></span>
+<span class="line">  <span class="token punctuation">}</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p><strong>Nginx反向代理</strong></p>
+<p>Nginx 作为一种高效的反向代理服务器，其工作原理与 Node.js 中间件代理相似，它允许开发者搭建一个中转服务器来转发请求。通过 Nginx 实现反向代理，可以轻松地解决跨域问题，这是一种简便且高效的解决方案。具体来说，通过修改 Nginx 的配置文件，可以设置反向代理，将请求从一个服务器转发到另一个服务器。这种方式不仅适用于所有主流浏览器，而且支持 session 管理，无需对现有代码进行任何修改，也不会对服务器性能产生负面影响。</p>
+<p>操作步骤如下：</p>
+<ul>
+<li>在 Nginx 配置文件中，为需要代理的每个服务设置一个特定的前缀。</li>
+<li>配置 Nginx 将这些前缀的 HTTP/HTTPS 请求转发到对应的真实服务器。</li>
+<li>通过这种方式，所有通过 Nginx 转发的 URL 都将具有相同的域名、协议和端口号，从而满足浏览器的同源策略要求。</li>
+</ul>
+<p>由于所有 URL 都指向同一个服务器，浏览器将它们视为同源，从而避免了跨域访问的限制。实际上，这些 URL 背后是由不同的物理服务器提供服务。这样，服务器内部的 JavaScript 代码就可以自由地跨域调用这些服务器上的资源。</p>
+</li>
+<li>
+<p><strong>JSONP</strong></p>
+<p>JSONP 是服务器与客户端跨源通信的常用方法。最大特点就是简单适用，兼容性好（兼容低版本IE），缺点是只支持get请求，不支持post请求。通过 JSONP 跨域 填充式 json，类似往页面添加一个 script 标签，通过 src 属性去触发对指定地址的请求，故只能是 Get 请求。</p>
+<div class="language-html line-numbers-mode" data-highlighter="prismjs" data-ext="html" data-title="html"><pre v-pre><code><span class="line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>http://test.com/data.php?callback=dosomething<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token script"></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></span>
+<span class="line">// 向服务器test.com发出请求，该请求的查询字符串有一个callback参数，用来指定回调函数的名字</span>
+<span class="line"> </span>
+<span class="line">// 处理服务器返回回调函数的数据</span>
+<span class="line"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>text/javascript<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript"></span>
+<span class="line">  <span class="token keyword">function</span> <span class="token function">dosomething</span><span class="token punctuation">(</span><span class="token parameter">res</span><span class="token punctuation">)</span><span class="token punctuation">{</span></span>
+<span class="line">    <span class="token comment">// 处理获得的数据</span></span>
+<span class="line">    console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>res<span class="token punctuation">.</span>data<span class="token punctuation">)</span></span>
+<span class="line">  <span class="token punctuation">}</span></span>
+<span class="line"></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p><strong>domain</strong></p>
+<p>可以通过设置document.domain解决无法读取非同源网页的 Cookie问题。因为浏览器是通过document.domain属性来检查两个页面是否同源，因此只要通过设置相同的document.domain，两个页面就可以共享Cookie（此方案仅限主域相同，子域不同的跨域应用场景。）</p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line">document<span class="token punctuation">.</span>domain <span class="token operator">=</span> <span class="token string">'test.com'</span><span class="token punctuation">;</span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div></div></div></li>
+<li>
+<p><strong>跨文档通信API</strong></p>
+<p>在Web开发中，跨文档消息传递是一个常见的需求，尤其是在使用iframe或弹出窗口时。postMessage方法提供了一种安全的方式来实现跨源通信，允许父窗口（parent window）和子窗口（child window）之间进行消息交换。</p>
+<p>使用postMessage方法可以解决以下方面的问题：</p>
+<ul>
+<li>跨域通信：允许不同源的窗口之间安全地交换信息，而不需要担心同源策略的限制。</li>
+<li>动态内容更新：父窗口可以向子窗口发送更新指令，子窗口根据这些指令更新页面内容。</li>
+<li>用户交互：子窗口可以响应用户操作，并将用户的交互结果发送回父窗口。</li>
+<li>安全性：通过检查event.origin属性，可以确保消息的来源是可信的，防止恶意网站发送伪造的消息。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="对websocket的理解" tabindex="-1"><a class="header-anchor" href="#对websocket的理解"><span>对websocket的理解</span></a></h2>
+<ol>
+<li>
+<p><strong>概念</strong></p>
+<p>是一种网络传输协议，位于OSI模型的应用层。可在单个TCP连接上进行全双工通信，能更好的节省服务器资源和带宽并达到实时通迅。客户端和服务器只需要完成一次握手，两者之间就可以创建持久性的连接，并进行双向数据传输。</p>
+<p>在websocket出现之前，开发实时web应用的方式为轮询：不停地向服务器发送 HTTP 请求，问有没有数据，有数据的话服务器就用响应报文回应。如果轮询的频率比较高，那么就可以近似地实现“实时通信”的效果。轮询的缺点也很明显，反复发送无效查询请求耗费了大量的带宽和 CPU资源</p>
+</li>
+<li>
+<p><strong>特点</strong></p>
+<ul>
+<li>
+<p>全双工：服务器可以主动向客户端推送信息，客户端也可以主动向服务器发送信息，是真正的双向平等对话，属于服务器推送技术的一种</p>
+</li>
+<li>
+<p>二进制帧：采用了二进制帧结构，语法、语义与 HTTP 完全不兼容，相比http/2，WebSocket更侧重于“实时通信”，而HTTP/2 更侧重于提高传输效率，所以两者的帧结构也有很大的区别。不像 HTTP/2 那样定义流，也就不存在多路复用、优先级等特性。自身就是全双工，也不需要服务器推送</p>
+</li>
+<li>
+<p>协议名：引入ws和wss分别代表明文和密文的websocket协议，且默认端口使用80或443，几乎与http一致</p>
+<div class="language-http line-numbers-mode" data-highlighter="prismjs" data-ext="http" data-title="http"><pre v-pre><code><span class="line"><span class="token header"><span class="token header-name keyword">ws</span><span class="token punctuation">:</span><span class="token header-value">//www.chrono.com</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">ws</span><span class="token punctuation">:</span><span class="token header-value">//www.chrono.com:8080/srv</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">wss</span><span class="token punctuation">:</span><span class="token header-value">//www.chrono.com:445/im?user_id=xxx</span></span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p>握手：WebSocket也要有一个握手过程，然后才能正式收发数据。</p>
+<p>客户端发送数据格式如下：</p>
+<div class="language-http line-numbers-mode" data-highlighter="prismjs" data-ext="http" data-title="http"><pre v-pre><code><span class="line"><span class="token request-line"><span class="token method property">GET</span> <span class="token request-target url">/chat</span> <span class="token http-version property">HTTP/1.1</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Host</span><span class="token punctuation">:</span> <span class="token header-value">server.example.com</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Upgrade</span><span class="token punctuation">:</span> <span class="token header-value">websocket       // 必须设置Websocket，表示希望升级到Websocket协议</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Connection</span><span class="token punctuation">:</span> <span class="token header-value">Upgrade      // 必须设置Upgrade，表示客户端希望连接升级</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Sec-WebSocket-Key</span><span class="token punctuation">:</span> <span class="token header-value">dGhlIHNhbXBsZSBub25jZQ==  // 客户端发送的一个 base64 编码的密文，用于简单的认证秘钥</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Origin</span><span class="token punctuation">:</span> <span class="token header-value">http://example.com</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Sec-WebSocket-Protocol</span><span class="token punctuation">:</span> <span class="token header-value">chat, superchat</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Sec-WebSocket-Version</span><span class="token punctuation">:</span> <span class="token header-value">13  // 表示支持的Websocket版本</span></span></span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div><p>服务端返回的数据格式：</p>
+<div class="language-http line-numbers-mode" data-highlighter="prismjs" data-ext="http" data-title="http"><pre v-pre><code><span class="line"><span class="token response-status"><span class="token http-version property">HTTP/1.1</span> <span class="token status-code number">101</span> <span class="token reason-phrase string">Switching Protocols   // 表示服务端接受 WebSocket 协议的客户端连接</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Upgrade</span><span class="token punctuation">:</span> <span class="token header-value">websocket</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Connection</span><span class="token punctuation">:</span> <span class="token header-value">Upgrade</span></span></span>
+<span class="line"><span class="token header"><span class="token header-name keyword">Sec-WebSocket-Accept</span><span class="token punctuation">:</span> <span class="token header-value">s3pPLMBiTxaQ9kYGzzhZRbK+xOo=Sec-WebSocket-Protocol: chat  </span></span></span>
+<span class="line">// 验证客户端请求报文，同样也是为了防止误连接</span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+</ul>
+</li>
+<li>
+<p><strong>优点</strong></p>
+<ul>
+<li>没有同源限制，客户端可以与任意服务器通信；</li>
+<li>较少的控制开销：数据包头部协议较小，不同于http每次请求需要携带完整的头部</li>
+<li>更强的实时性：相对于HTTP请求需要等待客户端发起请求服务端才能响应，延迟明显更少</li>
+<li>保持创连接状态：创建通信后，可省略状态信息，不同于HTTP每次请求需要携带身份验证</li>
+<li>更好的二进制支持：定义了二进制帧，更好处理二进制内容</li>
+<li>支持扩展：用户可以扩展websocket协议、实现部分自定义的子协议</li>
+<li>更好的压缩效果：Websocket在适当的扩展支持下，可以沿用之前内容的上下文，在传递类似的数据时，可以显著地提高压缩率</li>
+</ul>
+</li>
+<li>
+<p><strong>使用</strong></p>
+<div class="language-javascript line-numbers-mode" data-highlighter="prismjs" data-ext="js" data-title="js"><pre v-pre><code><span class="line"><span class="token keyword">var</span> ws <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">WebSocket</span><span class="token punctuation">(</span><span class="token string">'ws://localhost:8080'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">ws<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'your message'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">ws<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'open'</span><span class="token punctuation">,</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">  ws<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token string">'Hello Server!'</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line"><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">ws<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"close"</span><span class="token punctuation">,</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token keyword">var</span> code <span class="token operator">=</span> event<span class="token punctuation">.</span>code<span class="token punctuation">;</span></span>
+<span class="line">  <span class="token keyword">var</span> reason <span class="token operator">=</span> event<span class="token punctuation">.</span>reason<span class="token punctuation">;</span></span>
+<span class="line">  <span class="token keyword">var</span> wasClean <span class="token operator">=</span> event<span class="token punctuation">.</span>wasClean<span class="token punctuation">;</span></span>
+<span class="line">  <span class="token comment">// handle close event</span></span>
+<span class="line"><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span>
+<span class="line">ws<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">"message"</span><span class="token punctuation">,</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span></span>
+<span class="line">  <span class="token keyword">var</span> data <span class="token operator">=</span> event<span class="token punctuation">.</span>data<span class="token punctuation">;</span></span>
+<span class="line">  <span class="token comment">// 处理数据</span></span>
+<span class="line"><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  </span>
+<span class="line"></span></code></pre>
+<div class="line-numbers" aria-hidden="true" style="counter-reset:line-number 0"><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div><div class="line-number"></div></div></div></li>
+<li>
+<p><strong>应用场景</strong></p>
+<ul>
+<li>弹幕</li>
+<li>媒体聊天</li>
+<li>协同编辑</li>
+<li>基于位置的应用</li>
+<li>体育实况更新</li>
+<li>股票基金报价实时更新</li>
+</ul>
+</li>
+</ol>
+<h2 id="osi-七层模型" tabindex="-1"><a class="header-anchor" href="#osi-七层模型"><span>OSI 七层模型</span></a></h2>
+<ol>
+<li>
+<p><strong>概念</strong></p>
+<p>OSI （Open System Interconnect）模型全称为开放式通信系统互连参考模型，是国际标准化组织 ( ISO ) 提出的一个试图使各种计算机在世界范围内互连为网络的标准框架。OSI将计算机网络体系结构划分为七层，每一层实现各自的功能和协议，并完成与相邻层的接口通信。即每一层扮演固定的角色，互不打扰。</p>
+<p>特点：对等通信，为了使数据分组从源传送到目的地，源端 OSI 模型的每一层都必须与目的端的对等层进行通信，这种通信方式称为对等层通信。在每一层通信过程中，使用本层自己协议进行通信。</p>
+</li>
+<li>
+<p>划分</p>
+<ul>
+<li>
+<p><strong>应用层</strong></p>
+<p>OSI 参考模型中最靠近用户的一层，是为计算机用户提供应用接口，也为用户直接提供各种网络服务。我们常见应用层的网络服务协议有：HTTP，HTTPS，FTP，POP3、SMTP 等。在客户端与服务器中经常会有数据的请求，这个时候就是会用到http(hyper text transfer protocol)(超文本传输协议)或者 https. 在后端设计数据接口时，我们常常使用到这个协议。FTP 是文件传输协议，在开发过程中，个人并没有涉及到，但是我想，在一些资源网站，比如百度网盘``迅雷应该是基于此协议的。SMTP 是 simple mail transfer protocol（简单邮件传输协议）。在一个项目中，在用户邮箱验证码登录的功能时，使用到了这个协议。</p>
+</li>
+<li>
+<p><strong>表示层</strong></p>
+<p>提供各种用于应用层数据的编码和转换功能,确保一个系统的应用层发送的数据能被另一个系统的应用层识别。如果必要，该层可提供一种标准表示形式，用于将计算机内部的多种数据格式转换成通信中采用的标准表示形式。数据压缩和加密也是表示层可提供的转换功能之一。在项目开发中，为了方便数据传输，可以使用 base64 对数据进行编解码。如果按功能来划分，base64 应该是工作在表示层</p>
+</li>
+<li>
+<p><strong>会话层</strong></p>
+<p>会话层就是负责建立、管理和终止表示层实体之间的通信会话。该层的通信由不同设备中的应用程序之间的服务请求和响应组成。</p>
+</li>
+<li>
+<p><strong>传输层</strong></p>
+<p>建立了主机端到端的链接，传输层的作用是为上层协议提供端到端的可靠和透明的数据传输服务，包括处理差错控制和流量控制等问题。该层向高层屏蔽了下层数据通信的细节，使高层用户看到的只是在两个传输实体间的一条主机到主机的、可由用户控制和设定的、可靠的数据通路。我们通常说的，TCP UDP 就是在这一层。端口号既是这里的“端”。</p>
+</li>
+<li>
+<p><strong>网路层</strong></p>
+<p>本层通过 IP 寻址来建立两个节点之间的连接，为源端的运输层送来的分组，选择合适的路由和交换节点，正确无误地按照地址传送给目的端的运输层。就是通常说的 IP 层。这一层就是我们经常说的 IP 协议层。IP 协议是 Internet 的基础。我们可以这样理解，网络层规定了数据包的传输路线，而传输层则规定了数据包的传输方式</p>
+</li>
+<li>
+<p><strong>数据链路层</strong></p>
+<p>将比特组合成字节,再将字节组合成帧,使用链路层地址 (以太网使用 MAC 地址)来访问介质,并进行差错检测。
+网络层与数据链路层的对比，通过上面的描述，我们或许可以这样理解，网络层是规划了数据包的传输路线，而数据链路层就是传输路线。不过，在数据链路层上还增加了差错控制的功能</p>
+</li>
+<li>
+<p><strong>物理层</strong></p>
+<p>实际最终信号的传输是通过物理层实现的。通过物理介质传输比特流。规定了电平、速度和电缆针脚。常用设备有（各种物理设备）集线器、中继器、调制解调器、网线、双绞线、同轴电缆。这些都是物理层的传输介质</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>传输过程</strong></p>
+<ul>
+<li>应用层报文被传送到运输层</li>
+<li>在最简单的情况下，运输层收取到报文并附上附加信息，该首部将被接收端的运输层使用</li>
+<li>应用层报文和运输层首部信息一道构成了运输层报文段。附加的信息可能包括：允许接收端运输层向上向适当的应用程序交付报文的信息以及差错检测位信息。该信息让接收端能够判断报文中的比特是否在途中已被改变</li>
+<li>运输层则向网络层传递该报文段，网络层增加了如源和目的端系统地址等网络层首部信息，生成了网络层数据报</li>
+<li>网络层数据报接下来被传递给链路层，在数据链路层数据包添加发送端 MAC 地址和接收端 MAC 地址后被封装成数据帧</li>
+<li>在物理层数据帧被封装成比特流，之后通过传输介质传送到对端</li>
+<li>对端再一步步解开封装，获取到传送的数据</li>
+</ul>
+</li>
+</ol>
+<h2 id="哪些可能引起前端安全的问题" tabindex="-1"><a class="header-anchor" href="#哪些可能引起前端安全的问题"><span>哪些可能引起前端安全的问题</span></a></h2>
+<ol>
+<li>
+<p><strong>XSS</strong></p>
+<p>XSS 攻击指的是跨站脚本攻击，是一种代码注入攻击。攻击者通过在网站注入恶意脚本，使之在用户的浏览器上运行，从而盗取用户的信息如 cookie 等。XSS 的本质是因为网站没有对恶意代码进行过滤，与正常的代码混合在一起了，浏览器没有办法分辨哪些脚本是可信的，从而导致了恶意代码的执行。</p>
+<p>攻击者可以通过这种攻击方式可以进行以下操作：</p>
+<ul>
+<li>获取页面的数据，如 DOM、cookie、localStorage；</li>
+<li>DOS 攻击，发送合理请求，占用服务器资源，从而使用户无法访问服务器；</li>
+<li>破坏页面结构；</li>
+<li>流量劫持（将链接指向某网站）</li>
+</ul>
+<p>具有以下几种类型：</p>
+<ul>
+<li>
+<p>反射型：攻击者诱导用户访问一个带有恶意代码的 URL 后，服务器端接收数据后处理，然后把带有恶意代码的数据发送到浏览器端，浏览器端解析这段带有 XSS 代码的数据后当做脚本执行，最终完成XSS 攻击。反射型 XSS 的攻击步骤：</p>
+<ul>
+<li>攻击者构造出特殊的 URL，其中包含恶意代码。</li>
+<li>⽤户打开带有恶意代码的 URL 时，⽹站服务端将恶意代码从 URL中取出，拼接在 HTML 中返回给浏览器。</li>
+<li>⽤户浏览器接收到响应后解析执⾏，混在其中的恶意代码也被执⾏。</li>
+<li>恶意代码窃取⽤户数据并发送到攻击者的⽹站，或者冒充⽤户的⾏为，调⽤⽬标⽹站接⼝执⾏攻击者指定的操作。</li>
+</ul>
+<p>反射型 XSS 跟存储型 XSS 的区别是：存储型 XSS 的恶意代码存在数据库⾥，反射型 XSS 的恶意代码存在 URL ⾥。反射型 XSS 漏洞常⻅于通过 URL 传递参数的功能，如⽹站搜索、跳转等。 由于需要⽤户主动打开恶意的 URL 才能⽣效，攻击者往往会结合多种⼿段诱导⽤户点击。</p>
+</li>
+<li>
+<p>存储型：恶意脚本会存储在目标服务器上，当浏览器请求数据时，脚本从服务器传回并执行。存储型 XSS 的攻击步骤：</p>
+<ul>
+<li>攻击者将恶意代码提交到⽬标⽹站的数据库中。</li>
+<li>⽤户打开⽬标⽹站时，⽹站服务端将恶意代码从数据库取出，拼接在 HTML 中返回给浏览器。</li>
+<li>⽤户浏览器接收到响应后解析执⾏，混在其中的恶意代码也被执⾏。</li>
+<li>恶意代码窃取⽤户数据并发送到攻击者的⽹站，或者冒充⽤户的⾏为，调⽤⽬标⽹站接⼝执⾏攻击者指定的操作。</li>
+</ul>
+<p>这种攻击常⻅于带有⽤户保存数据的⽹站功能，如论坛发帖、商品评论、⽤户私信等。</p>
+</li>
+<li>
+<p>DOM型：通过修改页面的 DOM 节点形成的 XSS。DOM 型 XSS 的攻击步骤：</p>
+<ul>
+<li>攻击者构造出特殊的 URL，其中包含恶意代码</li>
+<li>⽤户打开带有恶意代码的 URL。</li>
+<li>⽤户浏览器接收到响应后解析执⾏，前端 JavaScript 取出 URL中的恶意代码并执⾏。</li>
+<li>恶意代码窃取⽤户数据并发送到攻击者的⽹站，或者冒充⽤户的⾏为，调⽤⽬标⽹站接⼝执⾏攻击者指定的操作。</li>
+</ul>
+<p>DOM 型 XSS 跟前两种 XSS 的区别：DOM 型 XSS 攻击中，取出和执⾏恶意代码由浏览器端完成，属于前端JavaScript ⾃身的安全漏洞，⽽其他两种 XSS 都属于服务端的安全漏洞。</p>
+</li>
+</ul>
+<p>防御措施有：</p>
+<ul>
+<li>可以从浏览器的执行来进行预防，一种是使用纯前端的方式，不用服务器端拼接后返回（不使用服务端渲染）。另一种是对需要插入到HTML 中的代码做好充分的转义。对于 DOM 型的攻击，主要是前端脚本的不可靠而造成的，对于数据获取渲染和字符串拼接的时候应该对可能出现的恶意代码情况进行判断。</li>
+<li>使用 CSP ，CSP 的本质是建立一个白名单，告诉浏览器哪些外部资源可以加载和执行，从而防止恶意代码的注入攻击。CSP 指的是内容安全策略，它的本质是建立一个白名单，告诉浏览器哪些外部资源可以加载和执行。我们只需要配置规则，如何拦截由浏览器自己来实现。通常有两种方式来开启 CSP，一种是设置 HTTP 首部中的Content-Security-Policy，一种是设置 meta 标签的方式<code v-pre>&lt;meta http-equiv=&quot;Content-Security-Policy&quot;&gt;</code></li>
+<li>对一些敏感信息进行保护，比如 cookie 使用 http-only，使得脚本无法获取。也可以使用验证码，避免脚本伪装成用户执行一些操作。</li>
+</ul>
+</li>
+<li>
+<p><strong>CSRF</strong></p>
+<p>指的是跨站请求伪造攻击，攻击者诱导用户进入一个第三方网站，然后该网站向被攻击网站发送跨站请求。如果用户在被攻击网站中保存了登录状态，那么攻击者就可以利用这个登录状态，绕过后台的用户验证，冒充用户向服务器执行一些操作。</p>
+<p>CSRF 攻击的本质是利用 cookie 会在同源请求中携带发送给服务器的特点，以此来实现用户的冒充。</p>
+<p>具有以下几种类型：</p>
+<ul>
+<li>GET 类型的 CSRF 攻击，比如在网站中的一个 img 标签里构建一个请求，当用户打开这个网站的时候就会自动发起提交。</li>
+<li>POST 类型的 CSRF 攻击，比如构建一个表单，然后隐藏它，当用户进入页面时，自动提交这个表单。</li>
+<li>链接类型的 CSRF 攻击，比如在 a 标签的 href 属性里构建一个请求，然后诱导用户去点击。</li>
+</ul>
+<p>防御措施有：</p>
+<ul>
+<li>进行同源检测，服务器根据 http 请求头中 origin 或者 referer信息来判断请求是否为允许访问的站点，从而对请求进行过滤。当origin 或者 referer 信息都不存在的时候，直接阻止请求。这种方式的缺点是有些情况下 referer 可以被伪造，同时还会把搜索引擎的链接也给屏蔽了。所以一般网站会允许搜索引擎的页面请求，但是相应的页面请求这种请求方式也可能被攻击者给利用。（Referer 字段会告诉服务器该网页是从哪个页面链接过来的）</li>
+<li>使用 CSRF Token 进行验证，服务器向用户返回一个随机数 Token ，当网站再次发起请求时，在请求参数中加入服务器端返回的 token ，然后服务器对这个 token 进行验证。这种方法解决了使用 cookie单一验证方式时，可能会被冒用的问题，但是这种方法存在一个缺点就是，我们需要给网站中的所有请求都添加上这个 token，操作比较繁琐。还有一个问题是一般不会只有一台网站服务器，如果请求经过负载平衡转移到了其他的服务器，但是这个服务器的 session 中没有保留这个 token 的话，就没有办法验证了。这种情况可以通过改变 token 的构建方式来解决。</li>
+<li>对 Cookie 进行双重验证，服务器在用户访问网站页面时，向请求域名注入一个 Cookie，内容为随机字符串，然后当用户再次向服务器发送请求的时候，从 cookie 中取出这个字符串，添加到 URL 参数中，然后服务器通过对 cookie 中的数据和参数中的数据进行比较，来进行验证。使用这种方式是利用了攻击者只能利用 cookie，但是不能访问获取 cookie 的特点。并且这种方法比 CSRF Token 的方法更加方便，并且不涉及到分布式访问的问题。这种方法的缺点是如果网站存在 XSS 漏洞的，那么这种方式会失效。同时这种方式不能做到子域名的隔离。</li>
+<li>在设置 cookie 属性的时候设置 Samesite ，限制 cookie 不能作为被第三方使用，从而可以避免被攻击者利用。Samesite 一共有两种模式，一种是严格模式，在严格模式下 cookie 在任何情况下都不可能作为第三方 Cookie 使用，在宽松模式下，cookie 可以被请求是GET 请求，且会发生页面跳转的请求所使用。</li>
+</ul>
+</li>
+<li>
+<p><strong>SQL注入</strong></p>
+<p>是通过将恶意的 Sql查询或添加语句插入到应用的输入参数中，再在后台 Sql服务器上解析执行进行的攻击。流程如下所示：</p>
+<ul>
+<li>找出SQL漏洞的注入点</li>
+<li>判断数据库的类型以及版本</li>
+<li>猜解用户名和密码</li>
+<li>利用工具查找Web后台管理入口</li>
+<li>入侵和破坏</li>
+</ul>
+<p>预防方式如下：</p>
+<ul>
+<li>严格检查输入变量的类型和格式</li>
+<li>过滤和转义特殊字符</li>
+<li>对访问数据库的Web应用程序采用Web应用防火墙</li>
+</ul>
+</li>
+<li>
+<p><strong>iframe的滥用</strong></p>
+<p>iframe 中的内容是由第三⽅来提供的，默认情况下他们不受控制，他们可以在 iframe 中运⾏JavaScirpt 脚本、Flash插件、弹出对话框等等，这可能会破坏前端⽤户体验；</p>
+</li>
+<li>
+<p><strong>恶意第三方库</strong></p>
+<p>⽆论是后端服务器应⽤还是前端应⽤开发，绝⼤多数时候都是在借助开发框架和各种类库进⾏快速开发，⼀旦第三⽅库被植⼊恶意代码很容易引起安全问题</p>
+</li>
+</ol>
+<h2 id="网络劫持有哪几种-如何防范" tabindex="-1"><a class="header-anchor" href="#网络劫持有哪几种-如何防范"><span>网络劫持有哪几种，如何防范</span></a></h2>
+<ol>
+<li>
+<p><strong>DNS劫持</strong></p>
+<p>(输⼊京东被强制跳转到淘宝这就属于 dns 劫持)</p>
+<ul>
+<li>DNS 强制解析: 通过修改运营商的本地 DNS 记录，来引导⽤户流量到缓存服务器</li>
+<li>302 跳转的⽅式: 通过监控⽹络出⼝的流量，分析判断哪些内容是可以进⾏劫持处理的,再对劫持的内存发起 302 跳转的回复，引导⽤户获取内容</li>
+</ul>
+</li>
+<li>
+<p><strong>HTTP劫持</strong></p>
+<p>(访问⾕歌但是⼀直有贪玩蓝⽉的⼴告),由于 http明⽂传输,运营商会修改你的 http响应内容(即加⼴告)</p>
+</li>
+<li>
+<p><strong>防范</strong></p>
+<p>DNS 劫持由于涉嫌违法，已经被监管起来，现在很少会有 DNS劫持，⽽http 劫持依然⾮常盛⾏，最有效的办法就是全站 HTTPS，将HTTP 加密，这使得运营商⽆法获取明⽂，就⽆法劫持你的响应内容。</p>
+</li>
+</ol>
+<h2 id="僵尸进程和孤儿进程是什么" tabindex="-1"><a class="header-anchor" href="#僵尸进程和孤儿进程是什么"><span>僵尸进程和孤儿进程是什么</span></a></h2>
+<ol>
+<li>
+<p><strong>孤儿进程</strong></p>
+<p>父进程退出了，而它的一个或多个进程还在运行，那这些子进程都会成为孤儿进程。孤儿进程将被 init 进程(进程号为 1)所收养，并由 init 进程对它们完成状态收集工作。</p>
+</li>
+<li>
+<p><strong>僵尸进程</strong></p>
+<p>子进程比父进程先结束，而父进程又没有释放子进程占用的资源，那么子进程的进程描述符仍然保存在系统中，这种进程称之为僵尸进程。</p>
+</li>
+</ol>
+</div></template>
+
+
